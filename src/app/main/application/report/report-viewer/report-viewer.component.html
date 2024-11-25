@@ -1,0 +1,42 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="home-page">
+      <div class="row">
+        <div class="col-12">
+          <div class="card" style="height: 700px;">
+            <div class="card-header">
+            <!-- <h4 class="card-title">Report Template</h4> -->
+            
+            </div>
+            <div class="card-body pb-1">
+              <!-- <button type="button" class="btn btn-primary" (click)="viewer1.refreshReport()">Refresh</button>
+              <button type="button" class="btn btn-primary" (click)="viewer1.commands.print.exec()">Print</button> -->
+              <tr-viewer 
+                #viewer1
+                [serviceUrl]="serviceUrl"
+                [reportSource]="reportSource"
+                [parameters]="{
+                    editors: {
+                        singleSelect: 'COMBO_BOX',
+                        multiSelect: 'COMBO_BOX'
+                    }
+                }"
+                [parametersAreaPosition]="'LEFT'"
+                [containerStyle]="viewerContainerStyle"
+                [viewMode]="'INTERACTIVE'"
+                [scaleMode]="'SPECIFIC'"
+                [scale]="1.0"
+                [ready]="ready"
+                [viewerToolTipOpening]="viewerToolTipOpening"
+                [enableAccessibility]="false"
+              >
+              </tr-viewer>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

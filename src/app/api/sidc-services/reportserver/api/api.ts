@@ -1,0 +1,11 @@
+export * from './project.service';
+import { ProjectService } from './project.service';
+export * from './projectModule.service';
+import { ProjectModuleService } from './projectModule.service';
+export * from './projectReportDetail.service';
+import { ProjectReportDetailService } from './projectReportDetail.service';
+export * from './projectReportTemplate.service';
+import { ProjectReportTemplateService } from './projectReportTemplate.service';
+export * from './projectReportTemplateAccessPerUser.service';
+import { ProjectReportTemplateAccessPerUserService } from './projectReportTemplateAccessPerUser.service';
+export const APIS = [ProjectService, ProjectModuleService, ProjectReportDetailService, ProjectReportTemplateService, ProjectReportTemplateAccessPerUserService];

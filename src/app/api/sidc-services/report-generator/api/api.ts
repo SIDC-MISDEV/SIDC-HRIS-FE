@@ -1,0 +1,15 @@
+export * from './interBranch.service';
+import { InterBranchService } from './interBranch.service';
+export * from './inventory.service';
+import { InventoryService } from './inventory.service';
+export * from './logs.service';
+import { LogsService } from './logs.service';
+export * from './pOSSummary.service';
+import { POSSummaryService } from './pOSSummary.service';
+export * from './purchasing.service';
+import { PurchasingService } from './purchasing.service';
+export * from './sales.service';
+import { SalesService } from './sales.service';
+export * from './virtualInventory.service';
+import { VirtualInventoryService } from './virtualInventory.service';
+export const APIS = [InterBranchService, InventoryService, LogsService, POSSummaryService, PurchasingService, SalesService, VirtualInventoryService];

@@ -1,0 +1,375 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <div class="row" *ngIf="isAdmin || isClient">
+      <div class="col-xl-12">
+        <div class="row">
+          <div class="col-xl-8">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Statistics</h4>
+                <div class="d-flex align-items-center">
+                  <p class="card-text mr-25 mb-0">Updated 10 minutes ago</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-3 col-sm-6 col-12 mb-2 mb-md-0">
+                    <div class="media">
+                      <div class="avatar bg-light-primary mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="truck" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.vendor }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Vendor</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-12 mb-2 mb-md-0">
+                    <div class="media">
+                      <div class="avatar bg-light-info mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="grid" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.categories }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Categories</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-12 mb-2 mb-sm-0">
+                    <div class="media">
+                      <div class="avatar bg-light-danger mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="box" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.products }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Products</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-12">
+                    <div class="media">
+                      <div class="avatar bg-light-success mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="dollar-sign" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.sales }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Sales</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Product details</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 col-sm-6 col-12 mb-2 mb-md-0">
+                    <div class="media">
+                      <div class="avatar bg-light-warning mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="trending-down" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.vendor }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Low Stock</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-12 mb-2 mb-md-0">
+                    <div class="media">
+                      <div class="avatar bg-light-danger mr-2">
+                        <div class="avatar-content">
+                          <i data-feather="x-square" class="avatar-icon"></i>
+                        </div>
+                      </div>
+                      <div class="media-body my-auto">
+                        <h4 class="font-weight-bolder mb-0">
+                          {{ data.statistics.analyticsData.categories }}
+                        </h4>
+                        <p class="card-text font-small-3 mb-0">Out of Stock</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-xl-8">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Sales And Purchase per Categories</h4>
+              </div>
+              <div id="line-chart" #apexLineChartRef>
+                <apx-chart
+                  [series]="apexLineChart.series"
+                  [chart]="{
+                    height: 300,
+                    width:
+                      isMenuToggled === false
+                        ? apexLineChartRef.offsetWidth
+                        : apexLineChart.chart.width,
+                    type: 'line',
+                    zoom: {
+                      enabled: false
+                    },
+                    toolbar: {
+                      show: true
+                    }
+                  }"
+                  [xaxis]="apexLineChart.xaxis"
+                  [yaxis]="apexLineChart.yaxis"
+                  [stroke]="apexLineChart.stroke"
+                  [tooltip]="apexLineChart.tooltip"
+                  [colors]="apexLineChart.colors"
+                  [dataLabels]="apexLineChart.dataLabels"
+                  [grid]="apexLineChart.grid"
+                ></apx-chart>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4">
+            <div class="card">
+              <div id="radar-chart" #apexRadarChartSalesAndPurchaseRef>
+                <div class="card-header">
+                  <h4 class="card-title">Sales And Purchase per Categories</h4>
+                </div>
+                <apx-chart
+                  [series]="apexRadarChartSalesAndPurchase.series"
+                  [chart]="{
+                    height: 300,
+                    width:
+                      isMenuToggled === false
+                        ? apexRadarChartSalesAndPurchaseRef.offsetWidth
+                        : apexRadarChartSalesAndPurchase.chart.width,
+                    type: 'radar',
+                    toolbar: {
+                      show: false
+                    },
+                    dropShadow: {
+                      enabled: false,
+                      blur: 8,
+                      left: 1,
+                      top: 1,
+                      opacity: 0.2
+                    }
+                  }"
+                  [xaxis]="apexRadarChartSalesAndPurchase.xaxis"
+                  [stroke]="apexRadarChartSalesAndPurchase.stroke"
+                  [markers]="apexRadarChartSalesAndPurchase.markers"
+                  [fill]="apexRadarChartSalesAndPurchase.fill"
+                  [grid]="apexRadarChartSalesAndPurchase.grid"
+                  [title]="apexRadarChartSalesAndPurchase.title"
+                  [colors]="apexRadarChartSalesAndPurchase.colors"
+                  [legend]="apexRadarChartSalesAndPurchase.legend"
+                ></apx-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-4">
+            <div class="card card-company-table">
+              <div class="card-header">
+                <h4 class="card-title">Foot Traffic</h4>
+              </div>
+
+              <div class="card-body">
+                <div id="bar-chart" #apexBarChartRef>
+                  <apx-chart
+                    [series]="apexBarChart.series"
+                    [chart]="{
+                      height: 400,
+                      width:
+                        isMenuToggled === false
+                          ? apexBarChartRef.offsetWidth
+                          : apexBarChart.chart.width,
+                      type: 'bar',
+                      toolbar: {
+                        show: false
+                      }
+                    }"
+                    [dataLabels]="apexBarChart.dataLabels"
+                    [plotOptions]="apexBarChart.plotOptions"
+                    [xaxis]="apexBarChart.xaxis"
+                    [colors]="apexBarChart.colors"
+                    [grid]="apexBarChart.grid"
+                  ></apx-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-4">
+            <div class="card card-company-table">
+              <div class="card-header">
+                <h4 class="card-title">Top 10 Sales Product</h4>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Sales</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div>
+                            <div class="font-small-2">Big Boy</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <div class="font-small-2">891.4K</div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4">
+            <div class="card">
+              <div id="radar-chart" #apexRadarChartRef>
+                <div class="card-header">
+                  <h4 class="card-title">
+                    Sales per Member Type per Categories
+                  </h4>
+                </div>
+                <apx-chart
+                  [series]="apexRadarChart.series"
+                  [chart]="{
+                    height: 300,
+                    width:
+                      isMenuToggled === false
+                        ? apexRadarChartRef.offsetWidth
+                        : apexRadarChart.chart.width,
+                    type: 'radar',
+                    toolbar: {
+                      show: false
+                    },
+                    dropShadow: {
+                      enabled: false,
+                      blur: 8,
+                      left: 1,
+                      top: 1,
+                      opacity: 0.2
+                    }
+                  }"
+                  [xaxis]="apexRadarChart.xaxis"
+                  [stroke]="apexRadarChart.stroke"
+                  [markers]="apexRadarChart.markers"
+                  [fill]="apexRadarChart.fill"
+                  [grid]="apexRadarChart.grid"
+                  [title]="apexRadarChart.title"
+                  [colors]="apexRadarChart.colors"
+                  [legend]="apexRadarChart.legend"
+                ></apx-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3"></div>
+    </div>
+
+    <div class="row match-height" *ngIf="isAdmin"></div>
+  </div>
+</div>

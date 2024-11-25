@@ -1,0 +1,112 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <app-content-header [contentHeader]="contentHeader"></app-content-header>
+      <section id="stocktransfers">
+        <div class="card">
+          <div class="row mt-1 mb-1">
+            <div class="col-md-6 col-12">
+              <div class="d-flex justify-content-between align-items-center m-1">
+                &nbsp;
+              </div>
+            </div>
+            <div
+              class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end"
+            >
+              <div
+                class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0 expanded-div"
+              >
+                <label class="d-flex justify-content-end mr-1 ml-md-0 expanded-div"
+                  >Select Year:</label>
+                  <select
+                  #selectYear
+                  [(ngModel)]="page.year"
+                  id="year"
+                  name="year"
+                  class="form-control"
+                  (change)="changeYear($event)"
+                >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="2020">2020</option>
+                <option [ngValue]="2021">2021</option>
+                <option [ngValue]="2022">2022</option>
+                <option [ngValue]="2023">2023</option>
+                <option [ngValue]="2024">2024</option>
+                <option [ngValue]="2025">2025</option>
+                </select>
+                
+              </div>
+            </div>
+          </div>
+          <ngx-datatable
+            #table
+            class="bootstrap core-bootstrap"
+            [columnMode]="ColumnMode.force"
+            [headerHeight]="40"
+            [rowHeight]="58"
+            [footerHeight]="50"
+            rowHeight="auto"
+            [rows]="rows"
+            [scrollbarH]="true"
+            [externalPaging]="true"
+            [count]="page.totalCount"
+            [offset]="page.pageNumber"
+            [limit]="page.size"
+            (page)="setPage($event)"
+          >
+            <ngx-datatable-column name="Reference" prop="reference" [width]="200">
+              <ng-template
+                let-row="row"
+                let-name="value"
+                ngx-datatable-cell-template
+              >
+                <div class="d-flex align-items-center">
+                  <!-- <div *ngIf="false; else customAvatar">
+                  </div> -->
+                  <!-- <ng-template #customAvatar>
+                    <div class="avatar mr-1 ml-0 bg-light-success">
+                      <div class="avatar-content">
+                        {{ row.fullName | initials }}
+                      </div>
+                    </div>
+                  </ng-template> -->
+                  <div class="cell-line-height">
+                    <span class="font-medium-1 d-block"
+                      ><span class="font-weight-bold" title="{{ row.reference }}">{{
+                        row.reference
+                      }}</span></span
+                    >
+                    <span
+                      class="text-muted font-small-2"
+                      title="{{ row.toWarehouseCode }}"
+                      >To Warehouse Code: {{ row.toWarehouseCode }}</span
+                    ><br>
+                    <span
+                      class="text-muted font-small-2"
+                      title="{{ row.branchCode }}"
+                      >Branch Code: {{ row.branchCode }}</span
+                    >
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+  
+            <ngx-datatable-column
+              name="Actions"
+              [width]="5"
+              [width]="100"
+              [sortable]="false"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                <button title="View Receipt" 
+                        [size]="16"
+                        class="btn btn-icon btn-icon rounded-circle btn-sm btn-flat-primary"
+                        [routerLink]="['/application/inventory/issuance/issuance-details', row.id, row.transactionDate | date:'yyyy']" rippleEffect
+                      ><i [data-feather]="'eye'"></i></button>
+              </ng-template> 
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+      </section>
+    </div>
+  </div>
+  

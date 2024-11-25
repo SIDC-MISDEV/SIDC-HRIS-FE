@@ -1,0 +1,21 @@
+.static-text-box {
+    padding: 0.25rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e3e6f0;
+    border-radius: 0;
+  }
+
+  .static-text-box-header {
+    padding: 0.25rem;
+    color: white;
+    background-color: gray;
+    border: 1px solid #e3e6f0;
+    border-radius: 0;
+    margin-top: 1rem;
+  }
+  
+  .info-container {
+    position: absolute;
+    bottom: 5;
+    width: 100%;
+  }
