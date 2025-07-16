@@ -1,0 +1,226 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="pim-page">
+      <div class="card" style="padding-bottom: 10px">
+          <div class="col-12" style="padding: 30px 30px 30px 5px">
+            <div class="d-flex flex-wrap align-items-start">
+              <div style="width: 100%">
+                <div>
+                  <div
+                    id="pim-stepper"
+                    class="bs-stepper vertical wizard-modern horizontal-wizard-example"
+                  >
+                    <div>
+                      <div
+                        class="row d-flex justify-content-center align-items-center"
+                        style="text-align: center; flex-direction: column;"
+                      >
+                        <span
+                          style="font-weight: bold; font-size: large"
+                          class="mb-1"
+                          >Juan Dela Cruz</span
+                        >
+                        <img
+                          style="
+                            border-radius: 50%;
+                            border: 5px solid white;
+                            box-shadow: 0px 0px 10px 1px rgb(193, 193, 193);
+                          "
+                          width="60%"
+                          src="../../../../../assets/images/avatars/default-avatar.png"
+                        />
+                      </div>
+                      <div class="bs-stepper-header d-flex mobile-hidden">
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(1)"
+                          [class.tab-selection]="true"
+                          data-target="#personal-details"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">1</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title">Personal</span>
+                              <span class="bs-stepper-subtitle"
+                                >Add Personal Details</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                        <div class="line">
+                          <i
+                            data-feather="chevron-right"
+                            class="font-medium-2"
+                          ></i>
+                        </div>
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(2)"
+                          [class.tab-selection]="true"
+                          data-target="#job-details"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">2</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title">Job</span>
+                              <span class="bs-stepper-subtitle"
+                                >Add Job Details</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                        <div class="line">
+                          <i
+                            data-feather="chevron-right"
+                            class="font-medium-2"
+                          ></i>
+                        </div>
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(3)"
+                          [class.tab-selection]="true"
+                          data-target="#emergency-contacts"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">3</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title"
+                                >Emergency Contacts</span
+                              >
+                              <span class="bs-stepper-subtitle"
+                                >Add Emergency Contacts</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                        <div class="line">
+                          <i
+                            data-feather="chevron-right"
+                            class="font-medium-2"
+                          ></i>
+                        </div>
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(4)"
+                          [class.tab-selection]="true"
+                          data-target="#salary"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">4</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title">Salary</span>
+                              <span class="bs-stepper-subtitle"
+                                >Add Salary</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                        <div class="line">
+                          <i
+                            data-feather="chevron-right"
+                            class="font-medium-2"
+                          ></i>
+                        </div>
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(5)"
+                          [class.tab-selection]="true"
+                          data-target="#report-to"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">5</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title">Report-to</span>
+                              <span class="bs-stepper-subtitle"
+                                >Add Report-to Details</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                        <div class="line">
+                          <i
+                            data-feather="chevron-right"
+                            class="font-medium-2"
+                          ></i>
+                        </div>
+                        <div
+                          class="step side-padding"
+                          (click)="goToTab(6)"
+                          [class.tab-selection]="true"
+                          data-target="#education"
+                        >
+                          <button class="step-trigger">
+                            <span class="bs-stepper-box">6</span>
+                            <span class="bs-stepper-label">
+                              <span class="bs-stepper-title">Education</span>
+                              <span class="bs-stepper-subtitle"
+                                >Add Education Details</span
+                              >
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bs-stepper-content">
+                      <form>
+                        <div id="personal-details" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Personal Details</h5>
+                          </div>
+                          <app-pim-personal-info></app-pim-personal-info>
+                        </div>
+
+                        <div id="job-details" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Job Details</h5>
+                          </div>
+                        </div>
+
+                        <div id="emergency-contacts" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Emergency Contacts</h5>
+                          </div>
+                        </div>
+
+                        <div id="salary" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Salary</h5>
+                          </div>
+                        </div>
+
+                        <div id="report-to" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Report To</h5>
+                          </div>
+                        </div>
+
+                        <div id="education" class="content">
+                          <div class="content-header">
+                            <h5 class="mb-0">Education</h5>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <hr class="custom-hr" />
+            <div class="d-flex justify-content-between">
+              <div>
+                <span>* Required</span>
+              </div>
+
+              <div>
+                <button class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </div>
+      </div>
+    </section>
+  </div>
+</div>

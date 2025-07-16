@@ -1,0 +1,271 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="pim-page">
+      <div class="card">
+        <div class="d-flex mt-1 justify-content-between">
+          <div class="col-6 ml-1 align-items-center d-flex">
+            <h4 style="margin: 0">Employee Information</h4>
+          </div>
+          <div class="col-6 d-flex justify-content-end mr-1" >
+            <div
+              *ngIf="isEmployeeInfoVisible"
+              (click)="toggleEmployeeInfoVisibility()"
+              class="mr-1 filter-head"              
+            >
+            <i
+                data-feather="chevron-up"
+                [size]="18"
+              ></i>
+              
+            </div>
+            <div
+              *ngIf="!isEmployeeInfoVisible"
+              (click)="toggleEmployeeInfoVisibility()"
+              class="mr-1 filter-head"
+            >
+              <i
+                data-feather="chevron-down"
+                [size]="18"                
+              ></i>
+            </div>
+          </div>
+        </div>
+        <hr class="custom-hr" [class.hide]="!isEmployeeInfoVisible" />
+        <form [formGroup]="filterPIMForm">
+          <div class="row mt-1" *ngIf="isEmployeeInfoVisible">
+            <div class="col-12">
+              <div class="d-flex flex-wrap align-items-center">
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="employeeName"
+                    >Employee Name</label
+                  >
+                  <input
+                    name="employeeName"
+                    placeholder="Type a keyword..."
+                    type="text"
+                    formControlName="employeeName"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="employeeCode"
+                    >Employee Code</label
+                  >
+                  <input
+                    name="employeeCode"
+                    type="text"
+                    formControlName="employeeCode"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="employmentStatusId"
+                    >Employment Status</label
+                  >
+                  <select
+                    name="employmentStatusId"
+                    type="text"
+                    formControlName="employmentStatusId"
+                    class="form-control"
+                  >
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                  </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="filterInclusion"
+                    >Filter Inclusion</label
+                  >
+                  <select
+                    name="filterInclusion"
+                    type="text"
+                    formControlName="filterInclusion"
+                    class="form-control"
+                  >
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-1" *ngIf="isEmployeeInfoVisible">
+            <div class="col-12">
+              <div class="d-flex flex-wrap align-items-center">
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="immediateSuperior"
+                    >Immediate Superior</label
+                  >
+                  <input
+                    name="immediateSuperior"
+                    placeholder="Type a keyword..."
+                    type="text"
+                    formControlName="immediateSuperior"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="jobTitle">Job Title</label>
+                  <select
+                    name="jobTitle"
+                    type="text"
+                    formControlName="jobTitle"
+                    class="form-control"
+                  >
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                  </select>
+                </div>
+                <div class="form-group col-12 col-md-3">
+                  <label class="form-label" for="departmentId"
+                    >Department</label
+                  >
+                  <select
+                    name="departmentId"
+                    type="text"
+                    formControlName="departmentId"
+                    class="form-control"
+                  >
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <div class="row mt-1 mb-1">
+          <div class="col-md-6 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              &nbsp;
+            </div>
+          </div>
+          <div
+            class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end"
+          >
+            <div
+              class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0"
+            >
+              <a class="btn btn-primary ml-1" [routerLink]="['/admin/pim/add']" rippleEffect>
+                <i
+                  data-feather="plus"
+                  class="d-sm-none d-inline-block mr-0 mr-sm-1"
+                ></i
+                ><span class="d-none d-sm-inline-block">Add New Employee</span>
+              </a>
+
+              <div ngbDropdown container="body" class="justify-content-md-end">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn btn-primary mr-75 ml-1"
+                  rippleEffect
+                >
+                  <span>Bulk Upload</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ngx-datatable
+          #table
+          class="bootstrap core-bootstrap"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="40"
+          [rowHeight]="58"
+          [footerHeight]="50"
+          [rows]="rows"
+          rowHeight="auto"
+          [limit]="10"
+          [scrollbarH]="true"
+          [externalPaging]="true"
+          [count]="page.totalCount"
+          [offset]="page.pageNumber"
+          [limit]="page.size"
+          (page)="setPage($event)"
+        >
+          <ngx-datatable-column
+            prop="employeeCode"
+            name="Code"
+            width="90"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="firstName"
+            name="First Name"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="lastName"
+            name="Last Name"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="jobTitle"
+            name="Job Title"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="status"
+            name="Status"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="department"
+            name="Department"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="immediateSuperior"
+            name="Immediate Superior"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column name="Actions" width="90" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span
+                    [data-feather]="'more-vertical'"
+                    [class]="'cursor-pointer'"
+                  ></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a ngbDropdownItem
+                    ><span
+                      [data-feather]="'eye'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    View</a
+                  >
+                  <a [routerLink]="['/admin/pim/employee-details/edit/', row.id]" ngbDropdownItem
+                    ><span
+                      [data-feather]="'edit'"
+                      [size]="16"
+                      [class]="'mr-50'"
+                    ></span>
+                    Edit</a
+                  >
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </section>
+  </div>
+</div>

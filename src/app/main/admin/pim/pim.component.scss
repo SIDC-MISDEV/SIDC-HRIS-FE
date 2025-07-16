@@ -1,0 +1,43 @@
+@import '@core/scss/angular/libs/datatables.component.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+@import '@core/scss/angular/libs/sweet-alerts.component.scss';
+@import '@core/scss/angular/libs/toastr.component.scss';
+
+.datatable-scroll {
+    width: auto !important;
+}
+
+.datatable-body-cell-label {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.truncate {
+    &-name {
+        width: 153px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.custom-hr.hide {
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.filter-head {
+    cursor: pointer;
+    border: none;
+    background-color: #24695c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+    color: white;
+    font-weight: bold;
+}

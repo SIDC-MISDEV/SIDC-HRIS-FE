@@ -11,7 +11,10 @@ const routes: Routes = [
     path: 'users',
     loadChildren: () => import('./users/users.module').then(m => m.UsersModule)
   },
-  
+  {
+    path: 'pim',
+    loadChildren: () => import('./pim/pim.module').then(m => m.PIMModule)
+  }  
 ];
 
 @NgModule({
