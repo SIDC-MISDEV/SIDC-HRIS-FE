@@ -16,7 +16,7 @@ import { CoreConfig } from '@core/types';
 // prettier-ignore
 export const coreConfig: CoreConfig = {
   app: {
-    appName     : 'Human Resource Information System?',                                        // App Name
+    appName     : 'Human Resource Information System',                                        // App Name
     appCode     : 'HRIS',                                        // App Name
     appTitle    : 'SIDC Human Resource Information System', // App Title
     appLogoImage: 'assets/images/logo/logo.png',                  // App Logo
