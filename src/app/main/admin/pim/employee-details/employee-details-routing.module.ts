@@ -5,8 +5,20 @@ import { EmployeeDetailsComponent } from './employee-details.component';
 
 const routes: Routes = [
   {
+    path: 'view/:id',
+    component: EmployeeDetailsComponent,
+    data: {
+      title: 'View PIM',
+      breadcrumb: 'View'
+    }
+  },
+  {
     path: 'edit/:id',
-    component: EmployeeDetailsComponent
+    component: EmployeeDetailsComponent,
+    data: {
+      title: 'Edit PIM',
+      breadcrumb: 'Edit'
+    }
   }
 ]
 

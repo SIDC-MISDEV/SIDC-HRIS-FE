@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 import Stepper from "bs-stepper";
 import { Subject } from "rxjs";
 
@@ -11,16 +12,17 @@ import { Subject } from "rxjs";
 })
 export class EmployeeDetailsComponent implements OnInit {
   public contentHeader: object;
-  public filterPIMForm!: FormGroup;
-
   private unsubscribeAll: Subject<any>;
   private horizontalWizardStepper: Stepper;
   private bsStepper;
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
+    const snapshotData = this.activatedRoute.snapshot.data;
+    console.log("SNAPSHOT: ", snapshotData);
+
     this.contentHeader = {
-      headerTitle: "PIM",
+      headerTitle: snapshotData.title,
       actionButton: false,
       breadcrumb: {
         type: "",
@@ -36,22 +38,12 @@ export class EmployeeDetailsComponent implements OnInit {
             link: "/admin/pim/",
           },
           {
-            name: "Edit",
+            name: snapshotData.breadcrumb,
             isLink: false,
           },
         ],
       },
     };
-
-    this.filterPIMForm = this.formBuilder.group({
-      employeeName: [null],
-      employeeCode: [null],
-      employmentStatusId: [0],
-      filterInclusion: [null],
-      immediateSuperior: [null],
-      jobTitle: [null],
-      departmentId: [0],
-    });
 
     this.horizontalWizardStepper = new Stepper(
       document.querySelector("#pim-stepper"),
