@@ -1,9 +1,12 @@
 {
   "name": "sidc-hris",
   "version": "7.0.0",
+  "engines": {
+    "node": "18.20.8"
+  },
   "scripts": {
     "ng": "ng",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider set NODE_OPTIONS=--max_old_space_size=8192 & ng serve --open",
+    "start": "cross-env NODE_OPTIONS=\"--openssl-legacy-provider --max_old_space_size=8192\" ng serve --open",
     "start-hmr": "ng serve --configuration hmr --source-map=false --hmr-warning=false",
     "start-hmr-sourcemaps": "ng serve --configuration hmr --source-map=true --hmr-warning=false",
     "build": "node --openssl-legacy-provider --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build",
@@ -93,6 +96,7 @@
     "@types/jasmine": "3.6.3",
     "@types/node": "12.11.1",
     "codelyzer": "6.0.1",
+    "cross-env": "^7.0.3",
     "jasmine-core": "3.7.0",
     "karma": "6.3.0",
     "karma-chrome-launcher": "3.1.0",

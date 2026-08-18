@@ -1,6 +1,6 @@
 /**
- * SIDC Identity Core
- * Our Endpoints are powered by .Net Core, Onion Architecture, CQRS with MediatR Library,Entity Framework Core - Code First,Repository Pattern - Generic, Swagger UI, API Versioning,Fluent Validation and Automapper.
+ * Identity API
+ * A production-ready Clean Architecture template for .NET 10 by Mukesh Murugan
  *
  * OpenAPI spec version: v1
  * Contact: sidcmisdepartment@gmail.com
@@ -17,7 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { CreateRoleRequest } from '../model/createRoleRequest';
+import { CreateRoleCommand } from '../model/createRoleCommand';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -56,23 +56,78 @@ export class RoleService {
 
 
     /**
+     * Create a new role
      * 
-     * 
+     * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiRoleGet(observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiRoleGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiRoleGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiRoleGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public createRole(body: CreateRoleCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public createRole(body: CreateRoleCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public createRole(body: CreateRoleCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public createRole(body: CreateRoleCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling createRole.');
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('post',`${this.basePath}/api/role/role`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get all roles
+     * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getRoles(observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getRoles(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getRoles(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getRoles(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -96,25 +151,35 @@ export class RoleService {
     }
 
     /**
+     * Get user IDs by role
      * 
-     * 
-     * @param body 
+     * @param role 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiRoleRolePost(body?: CreateRoleRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiRoleRolePost(body?: CreateRoleRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiRoleRolePost(body?: CreateRoleRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiRoleRolePost(body?: CreateRoleRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getUserIdsByRole(role: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getUserIdsByRole(role: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getUserIdsByRole(role: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getUserIdsByRole(role: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (role === null || role === undefined) {
+            throw new Error('Required parameter role was null or undefined when calling getUserIdsByRole.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (role !== undefined && role !== null) {
+            queryParameters = queryParameters.set('Role', <any>role);
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -125,18 +190,11 @@ export class RoleService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
         ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/role/role`,
+        return this.httpClient.request<any>('get',`${this.basePath}/api/role/get-userId-by-role`,
             {
-                body: body,
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

@@ -90,14 +90,14 @@ export class LoginComponent implements OnInit {
 
     this.blockUI.start();
 
-    this.identityService.apiIdentityTokenPost(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+    this.identityService.token(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
       this.blockUI.stop();
       const helper = new JwtHelperService();
-      const tokenDetails = helper.decodeToken(response.data.jwToken);
+      const tokenDetails = helper.decodeToken(response.jwToken);
       const fullName = tokenDetails.full_name;
       const firstName = tokenDetails.first_name;
       const lastName = tokenDetails.last_name;
-      this.authService.user = {...response.data, fullName, firstName, lastName};
+      this.authService.user = {...response, fullName, firstName, lastName};
       localStorage.setItem("currentUser", JSON.stringify(this.authService.currentUserValue));
       localStorage.setItem("token", this.authService.currentUserValue.jwToken);
       // if (this.authService.isAdmin) {
@@ -110,7 +110,7 @@ export class LoginComponent implements OnInit {
     }, (httpError: HttpErrorResponse) => {
 
       this.blockUI.stop();
-      this.toastr.error('', httpError.error.Message, {
+      this.toastr.error('', httpError.error?.detail || httpError.error?.title, {
         timeOut: 3000,
         positionClass: 'toast-bottom-center',
         toastClass: 'toast ngx-toastr',
@@ -127,7 +127,7 @@ export class LoginComponent implements OnInit {
    */
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['jamikee', [Validators.required]],
+      username: ['', [Validators.required]],
       password: ['', Validators.required]
     });
 

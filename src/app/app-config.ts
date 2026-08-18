@@ -17,13 +17,13 @@ import { CoreConfig } from '@core/types';
 export const coreConfig: CoreConfig = {
   app: {
     appName     : 'Human Resource Information System',                                        // App Name
-    appCode     : 'HRIS',                                        // App Name
+    appCode     : 'SIDC HRIS',                                    // App Name
     appTitle    : 'SIDC Human Resource Information System', // App Title
     appLogoImage: 'assets/images/logo/logo.png',                  // App Logo
     appLanguage : 'tl',                                           // App Default Language (en, fr, de, pt etc..)
   },
   layout: {
-    skin  : 'default',                        // default, dark, bordered, semi-dark
+    skin  : 'semi-dark',                      // default, dark, bordered, semi-dark
     type  : 'vertical',                       // vertical, horizontal
     animation : 'fadeIn',                     // fadeInLeft, zoomIn , fadeIn, none
     menu : {
