@@ -1,0 +1,49 @@
+.home-hero {
+  .home-hero-logo {
+    height: 3rem;
+  }
+
+  .home-hero-illustration {
+    max-height: 12rem;
+  }
+}
+
+.home-quick-access {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+
+  .home-quick-access-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 6.5rem;
+    text-align: center;
+    color: inherit;
+
+    &:hover {
+      color: #24695c;
+    }
+  }
+
+  .home-quick-access-title {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+.home-content-card {
+  height: calc(100% - 1.5rem);
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  overflow: hidden;
+
+  .home-content-card-header {
+    padding: 0.8rem 1.2rem;
+  }
+
+  .home-content-card-body {
+    padding: 1.2rem;
+  }
+}

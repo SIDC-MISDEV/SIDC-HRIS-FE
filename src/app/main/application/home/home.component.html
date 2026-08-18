@@ -1,0 +1,71 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+
+    <!-- Hero -->
+    <div class="card home-hero">
+      <div class="card-body">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+          <div class="home-hero-text">
+            <div class="d-flex align-items-center mb-1">
+              <img src="assets/images/logo/logo.png" alt="SIDC HRIS" class="home-hero-logo mr-1" />
+              <h1 class="mb-0 text-primary font-weight-bolder">SIDC HRIS</h1>
+            </div>
+            <h4 class="font-weight-normal mb-1">
+              <strong>Human Resources</strong> Information System
+            </h4>
+            <p class="text-muted mb-0">
+              Your one-stop platform for HR services and information.<br />
+              We're here to support you every step of the way.
+            </p>
+          </div>
+          <img src="assets/images/illustration/marketing.svg" alt="" class="home-hero-illustration d-none d-lg-block" />
+        </div>
+
+        <hr class="my-2" />
+
+        <!-- Quick access -->
+        <div class="home-quick-access">
+          <a *ngFor="let link of quickAccessLinks" [routerLink]="[link.url]" class="home-quick-access-item">
+            <span class="avatar avatar-lg bg-light-primary">
+              <span class="avatar-content">
+                <span [data-feather]="link.icon"></span>
+              </span>
+            </span>
+            <span class="home-quick-access-title">{{ link.title }}</span>
+          </a>
+        </div>
+        <!--/ Quick access -->
+
+        <hr class="my-2" />
+
+        <!-- Content cards -->
+        <div class="row">
+          <div class="col-md-4 col-12" *ngFor="let card of cards">
+            <div class="home-content-card">
+              <div class="home-content-card-header bg-light-primary">
+                <h5 class="mb-0">{{ card.title }}</h5>
+              </div>
+              <div class="home-content-card-body d-flex">
+                <span class="avatar bg-light-primary mr-1">
+                  <span class="avatar-content">
+                    <span [data-feather]="card.icon"></span>
+                  </span>
+                </span>
+                <div>
+                  <h6 class="mb-25">{{ card.headline }}</h6>
+                  <p class="text-muted mb-50">{{ card.body }}</p>
+                  <a href="javascript:void(0)">Learn More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--/ Content cards -->
+
+      </div>
+    </div>
+    <!--/ Hero -->
+
+  </div>
+</div>

@@ -7,7 +7,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'https://localhost:44377',
   apiVersion: '1',
-  apiUrlForIdentity: 'https://staging.api.identity.sidc.coop',
+  apiUrlForIdentity: 'https://staging.api.identity.ten.sidcoop.org',
   apiVersionForIdentity: '1',
   apiUrlForReportGenerator: 'https://staging.api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',

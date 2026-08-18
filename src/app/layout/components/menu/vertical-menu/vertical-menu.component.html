@@ -35,3 +35,23 @@
   <ul class="navigation navigation-main" layout="vertical" core-menu></ul>
 </div>
 <!--/ Main menu -->
+
+<!-- Quote of the week -->
+<div class="main-menu-quote">
+  <div class="main-menu-quote-label">Quote of the week</div>
+  <p class="main-menu-quote-text">"Talent gets attention, but consistent hard work earns trust."</p>
+</div>
+<!--/ Quote of the week -->
+
+<!-- Sidebar footer -->
+<div class="main-menu-footer">
+  <a class="d-flex align-items-center py-1 px-1" [routerLink]="['/application/help-support']">
+    <span data-feather="help-circle" class="mr-1"></span>
+    <span>Help and Support</span>
+  </a>
+  <a class="d-flex align-items-center py-1 px-1" href="javascript:void(0)" (click)="logout()">
+    <span data-feather="log-out" class="mr-1"></span>
+    <span>Logout</span>
+  </a>
+</div>
+<!--/ Sidebar footer -->

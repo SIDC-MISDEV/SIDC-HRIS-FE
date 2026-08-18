@@ -21,6 +21,11 @@ import { EcommerceComponent } from 'app/main/application/dashboard/ecommerce/eco
 
 const routes = [
   {
+    path: '',
+    redirectTo: 'analytics',
+    pathMatch: 'full',
+  },
+  {
     path: 'analytics',
     component: AnalyticsComponent,
     //canActivate: [AuthGuard],

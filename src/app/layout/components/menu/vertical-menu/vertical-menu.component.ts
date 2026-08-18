@@ -154,4 +154,12 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       this._coreConfigService.setConfig({ layout: { menu: { collapsed: true } } }, { emitEvent: true });
     }
   }
+
+  /**
+   * Logout
+   */
+  logout(): void {
+    this._authService.clearSession();
+    this._router.navigate(['/auth/login']);
+  }
 }

@@ -8,3 +8,80 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+// Brand-colored sidebar (semi-dark skin uses a generic dark gray by default)
+.semi-dark-layout {
+  .main-menu {
+    background-color: $primary;
+
+    .shadow-bottom {
+      background: linear-gradient(180deg, $primary 44%, rgba($primary, 0.51) 73%, rgba($primary, 0));
+    }
+
+    // Header (logo + brand text) sits inside .main-menu, so it inherits the
+    // green background too — needs light text/icon for contrast.
+    .navbar-header {
+      .brand-text {
+        color: $white;
+      }
+
+      .toggle-icon {
+        color: $white !important;
+      }
+    }
+  }
+
+  .main-menu-content .navigation-main {
+    background-color: $primary;
+
+    .menu-content {
+      background-color: $primary;
+
+      li:not(.active) a {
+        background-color: $primary;
+      }
+    }
+
+    li.active > a {
+      background-color: lighten($primary, 12%);
+      border-radius: 8px;
+    }
+  }
+
+  // Sidebar footer (Help and Support, Logout)
+  .main-menu-footer {
+    border-top: 1px solid rgba($white, 0.15);
+
+    a {
+      color: $white;
+      opacity: 0.85;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Quote of the Week card
+  .main-menu-quote {
+    background-color: $secondary;
+    border-radius: 8px;
+    margin: 0 0.6rem 1rem;
+    padding: 0.75rem 1rem;
+
+    .main-menu-quote-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      opacity: 0.75;
+      text-transform: uppercase;
+    }
+
+    .main-menu-quote-text {
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-top: 0.25rem;
+      margin-bottom: 0;
+    }
+  }
+}

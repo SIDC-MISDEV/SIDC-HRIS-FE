@@ -1,49 +1,84 @@
 import { CoreMenu } from '@core/types'
 
 export const menu: CoreMenu[] = [
-  
+  {
+    id: 'home',
+    title: 'Home',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'home',
+    url: 'application/home'
+  },
   {
     id: 'dashboard',
     title: 'Dashboard',
-    //translate: 'MENU.DASHBOARD.COLLAPSIBLE',
-    type: 'collapsible',
-    role: ['SupplyChainRegionalManager'],
-    icon: 'home',
-    // badge: {
-    //   title: '3',
-    //   translate: 'MENU.DASHBOARD.BADGE',
-    //   classes: 'badge-light-warning badge-pill'
-    // },
-    children: [
-      {
-        id: 'analytics',
-        title: 'Over All',
-       // translate: 'MENU.DASHBOARD.ANALYTICS',
-        type: 'item',
-        role: ['SupplyChainRegionalManager'], //? To set multiple role: ['Admin', 'Client']
-        icon: 'circle',
-        url: 'application/dashboard/analytics'
-      },
-   
-    ]
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'bar-chart-2',
+    url: 'application/dashboard-overview'
   },
   {
-    id: 'apps',
-    type: 'section',
-    title: 'Apps & Pages',
-    translate: 'MENU.APPS.SECTION',
-    role: ['SupplyChainRegionalManager'],
-    icon: 'package',
-    children: [
-      {
-        id: 'pim',
-        title: 'PIM',
-        // translate: 'MENU.REPORTS',
-        type: 'item',
-        icon: 'users',
-        role: ['SupplyChainRegionalManager'],
-        url: 'admin/pim',
-      }
-    ]
+    id: 'employees',
+    title: 'Employees',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'users',
+    url: 'admin/pim'
+  },
+  {
+    id: 'organization',
+    title: 'Organization',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'git-branch',
+    url: 'application/organization'
+  },
+  {
+    id: 'attendance-payroll',
+    title: 'Attendance & Payroll',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'calendar',
+    url: 'application/attendance-payroll'
+  },
+  {
+    id: 'performance-management',
+    title: 'Performance Management',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'trending-up',
+    url: 'application/performance-management'
+  },
+  {
+    id: 'learning-management',
+    title: 'Learning Management',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'book-open',
+    url: 'application/learning-management'
+  },
+  {
+    id: 'hr-policies',
+    title: 'HR Policies',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'file-text',
+    url: 'application/hr-policies'
+  },
+  {
+    id: 'reports',
+    title: 'Reports',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'pie-chart',
+    url: 'application/report'
+  },
+  {
+    id: 'archives',
+    title: 'Archives',
+    type: 'item',
+    role: ['ForIncubation'],
+    icon: 'archive',
+    url: 'application/archives'
   },
 ]
