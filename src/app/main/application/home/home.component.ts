@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 
   public quickAccessLinks: QuickAccessLink[] = [
     { title: 'Dashboard', icon: 'bar-chart-2', url: '/application/dashboard-overview' },
-    { title: 'Employees', icon: 'users', url: '/admin/pim' },
+    { title: 'Employees', icon: 'users', url: '/admin/employee' },
     { title: 'Organization', icon: 'git-branch', url: '/application/organization' },
     { title: 'Attendance and Payroll', icon: 'calendar', url: '/application/attendance-payroll' },
     { title: 'Performance Management', icon: 'trending-up', url: '/application/performance-management' },

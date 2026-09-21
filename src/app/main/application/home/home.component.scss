@@ -1,16 +1,26 @@
 .home-hero {
+  background-image: url('/assets/images/pages/home-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  .home-hero-text {
+    padding: 2rem 0;
+  }
+
   .home-hero-logo {
     height: 3rem;
   }
+}
 
-  .home-hero-illustration {
-    max-height: 12rem;
-  }
+.home-quick-access-card {
+  margin-top: 2rem;
 }
 
 .home-quick-access {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
 
   .home-quick-access-item {

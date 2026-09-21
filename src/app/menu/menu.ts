@@ -23,7 +23,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'users',
-    url: 'admin/pim'
+    url: 'admin/employee'
   },
   {
     id: 'organization',
@@ -36,10 +36,19 @@ export const menu: CoreMenu[] = [
   {
     id: 'attendance-payroll',
     title: 'Attendance & Payroll',
-    type: 'item',
+    type: 'collapsible',
     role: ['ForIncubation'],
     icon: 'calendar',
-    url: 'application/attendance-payroll'
+    children: [
+      {
+        id: 'payroll-approval',
+        title: 'Payroll Approval',
+        type: 'item',
+        role: ['ForIncubation'],
+        icon: 'check-square',
+        url: 'application/attendance-payroll/payroll-approval'
+      }
+    ]
   },
   {
     id: 'performance-management',

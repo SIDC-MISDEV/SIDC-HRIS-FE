@@ -34,6 +34,10 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   .main-menu-content .navigation-main {
     background-color: $primary;
 
+    // Vuexy's semi-dark skin has a more specific ".nav-item .menu-content"
+    // rule that paints the submenu panel with the dark-skin card color, so
+    // this needs the same ".nav-item" ancestor to actually win.
+    .nav-item .menu-content,
     .menu-content {
       background-color: $primary;
 
@@ -42,8 +46,22 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
       }
     }
 
+    // Same specificity issue as the panel-background fix above: the semi-dark
+    // skin's ".menu-content .active a { background-color: transparent }" rule
+    // otherwise wins over this and hides the highlight for submenu items
+    // (e.g. Payroll Approval under Attendance & Payroll).
+    .nav-item .menu-content li.active > a,
     li.active > a {
       background-color: lighten($primary, 12%);
+      border-radius: 8px;
+    }
+
+    // Collapsible parent items (e.g. Attendance & Payroll) default to the
+    // menu-dark skin's navy hover/open color — override to match the brand teal.
+    > li.open > a,
+    > li.sidebar-group-active > a {
+      background-color: lighten($primary, 12%) !important; 
+      color: $white;
       border-radius: 8px;
     }
   }

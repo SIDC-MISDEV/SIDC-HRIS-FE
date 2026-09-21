@@ -1,0 +1,11 @@
+export * from './payrollEmployeeDetails.service';
+import { PayrollEmployeeDetailsService } from './payrollEmployeeDetails.service';
+export * from './payrollEmployeeSchedule.service';
+import { PayrollEmployeeScheduleService } from './payrollEmployeeSchedule.service';
+export * from './payrollPeriod.service';
+import { PayrollPeriodService } from './payrollPeriod.service';
+export * from './payrollSummary.service';
+import { PayrollSummaryService } from './payrollSummary.service';
+export * from './payslip.service';
+import { PayslipService } from './payslip.service';
+export const APIS = [PayrollEmployeeDetailsService, PayrollEmployeeScheduleService, PayrollPeriodService, PayrollSummaryService, PayslipService];

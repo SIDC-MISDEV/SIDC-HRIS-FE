@@ -9,12 +9,18 @@ export const environment = {
   apiVersion: '1',
   apiUrlForIdentity: 'https://staging.api.identity.ten.sidcoop.org',
   apiVersionForIdentity: '1',
+  // Previous Identity host, kept alongside the .NET 10 one above
+  apiUrlForIdentityLegacy: 'https://staging.api.identity.sidcoop.org',
+  apiVersionForIdentityLegacy: '1',
   apiUrlForReportGenerator: 'https://staging.api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',
   apiUrlForReportServer: 'https://staging.api.reports.sidc.coop',
 
   apiUrlForDWInventory: 'https://staging.api.dw.inventory.sidc.coop',
   apiVersionForDWInventory: '1',
+
+  apiUrlForPayroll: 'https://staging.api.payroll.sidc.coop',
+  apiVersionForPayroll: '1',
 
   projectCodeForReportServer: 'SC'
 };

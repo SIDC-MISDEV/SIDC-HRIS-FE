@@ -43,8 +43,10 @@ const routes: Routes = [
   },
   {
     path: "attendance-payroll",
-    component: ComingSoonComponent,
-    data: { title: "Attendance & Payroll" },
+    loadChildren: () =>
+      import("./attendance-payroll/attendance-payroll.module").then(
+        (m) => m.AttendancePayrollModule
+      ),
   },
   {
     path: "performance-management",

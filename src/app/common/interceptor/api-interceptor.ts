@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class ApiInterceptor  implements HttpInterceptor {
@@ -46,7 +47,10 @@ export class ApiInterceptor  implements HttpInterceptor {
           this.authService.clearSession();
           this.router.navigate(["/"]);
         }
-        request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
+        // Payroll API trusts the legacy (.NET 5) Identity, so it gets the legacy token
+        const legacyToken: string | null = localStorage.getItem('legacyToken');
+        const bearerToken = legacyToken && request.url.startsWith(environment.apiUrlForPayroll) ? legacyToken : token;
+        request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + bearerToken) });
     }
 
     if (!request.headers.has('Content-Type')) {

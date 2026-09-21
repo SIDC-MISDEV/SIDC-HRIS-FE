@@ -5,6 +5,8 @@ export const environment = {
   apiVersion: '1',
   apiUrlForIdentity: 'https://api.identity.sidc.coop',
   apiVersionForIdentity: '1',
+  apiUrlForIdentityLegacy: 'https://api.identity.sidc.coop',
+  apiVersionForIdentityLegacy: '1',
   apiUrlForReportGenerator: 'https://api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',
   apiUrlForReportServer: 'https://api.reports.sidc.coop',
@@ -15,6 +17,8 @@ export const environment = {
   apiVersionForDWInventory: '1',
   apiUrlForDWSales: 'https://api.dw.sales.sidc.coop',
   apiVersionForDWSales: '1',
+  apiUrlForPayroll: 'https://api.payroll.sidc.coop',
+  apiVersionForPayroll: '1',
   projectCodeForReportServer: 'SC',
 
   sapHanaApiSetting: {

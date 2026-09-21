@@ -5,39 +5,32 @@
     <div class="card home-hero">
       <div class="card-body">
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap">
-          <div class="home-hero-text">
-            <div class="d-flex align-items-center mb-1">
-              <img src="assets/images/logo/logo.png" alt="SIDC HRIS" class="home-hero-logo mr-1" />
-              <h1 class="mb-0 text-primary font-weight-bolder">SIDC HRIS</h1>
-            </div>
-            <h4 class="font-weight-normal mb-1">
-              <strong>Human Resources</strong> Information System
-            </h4>
-            <p class="text-muted mb-0">
-              Your one-stop platform for HR services and information.<br />
-              We're here to support you every step of the way.
-            </p>
+        <div class="home-hero-text">
+          <div class="d-flex align-items-center mb-1">
+            <img src="assets/images/logo/logo.png" alt="SIDC HRIS" class="home-hero-logo mr-1" />
+            <h1 class="mb-0 text-primary font-weight-bolder">SIDC HRIS</h1>
           </div>
-          <img src="assets/images/illustration/marketing.svg" alt="" class="home-hero-illustration d-none d-lg-block" />
+          <h4 class="font-weight-normal mb-1">
+            <strong>Human Resources</strong> Information System
+          </h4>
+          <p class="text-muted mb-0">
+            Your one-stop platform for HR services and information.<br />
+            We're here to support you every step of the way.
+          </p>
         </div>
 
-        <hr class="my-2" />
-
-        <!-- Quick access -->
-        <div class="home-quick-access">
-          <a *ngFor="let link of quickAccessLinks" [routerLink]="[link.url]" class="home-quick-access-item">
-            <span class="avatar avatar-lg bg-light-primary">
-              <span class="avatar-content">
-                <span [data-feather]="link.icon"></span>
+        <div class="card home-quick-access-card">
+          <div class="card-body home-quick-access">
+            <a *ngFor="let link of quickAccessLinks" [routerLink]="[link.url]" class="home-quick-access-item">
+              <span class="avatar avatar-lg bg-light-primary">
+                <span class="avatar-content">
+                  <span [data-feather]="link.icon"></span>
+                </span>
               </span>
-            </span>
-            <span class="home-quick-access-title">{{ link.title }}</span>
-          </a>
+              <span class="home-quick-access-title">{{ link.title }}</span>
+            </a>
+          </div>
         </div>
-        <!--/ Quick access -->
-
-        <hr class="my-2" />
 
         <!-- Content cards -->
         <div class="row">
