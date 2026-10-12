@@ -6,8 +6,8 @@ import { environment } from 'environments/environment';
 import * as feather from 'feather-icons';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-payroll-approval',
@@ -21,6 +21,7 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
   public SelectionType = SelectionType;
   public rows = [];
   public loading = false;
+  public showPayrollIdColumn = false;
 
   private unsubscribeAll: Subject<any>;
   @BlockUI() blockUI: NgBlockUI;
@@ -43,7 +44,7 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     feather.replace();
     this.contentHeader = {
-      headerTitle: 'Payroll Approval',
+      headerTitle: 'Payroll Summary Approval',
       actionButton: false,
       breadcrumb: {
         type: '',
@@ -59,6 +60,10 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
           },
           {
             name: 'Payroll Approval',
+            isLink: false,
+          },
+          {
+            name: 'Payroll Summary',
             isLink: false,
           },
         ],
@@ -125,7 +130,67 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
       );
   }
 
-  view(row): void {
+  isApproved(row: any): boolean {
+    return row?.status?.toUpperCase() === 'APPROVED';
+  }
+
+  exportATMEmployees(row: any): void {
+    if (!this.isApproved(row)) {
+      return;
+    }
+    this.blockUI.start();
+    this.fetchAllATMEmployees(row.payrollId)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
+        (items) => {
+          this.blockUI.stop();
+          if (!items.length) {
+            this.toastr.info('', 'No ATM employees found for this payroll.', {
+              timeOut: 3000,
+              positionClass: 'toast-bottom-center',
+              toastClass: 'toast ngx-toastr',
+            });
+            return;
+          }
+          this.downloadCsv(`ATM-Employees-${row.payrollId}.csv`, items);
+        },
+        (httpError: HttpErrorResponse) => {
+          this.blockUI.stop();
+          this.toastr.error('', httpError.error?.Message ?? 'Unable to export ATM employees.', {
+            timeOut: 3000,
+            positionClass: 'toast-bottom-center',
+            toastClass: 'toast ngx-toastr',
+          });
+        }
+      );
+  }
+
+  // payrollGroup is the selected database (sofos2_payroll / sofos2_payroll_manager)
+  private fetchAllATMEmployees(payrollId: string): Observable<any[]> {
+    return this.payrollSummaryService
+      .apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet(environment.apiVersionForPayroll, this.payrollGroup, payrollId)
+      .pipe(map((response) => (Array.isArray(response) ? response : response?.Data ?? [])));
+  }
+
+  private downloadCsv(fileName: string, items: any[]): void {
+    const headers = ['Acct. Number', 'Amount', 'Name'];
+    const escape = (value: any) => {
+      const text = value === null || value === undefined ? '' : String(value);
+      return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
+    const lines = items.map((item) =>
+      [item.AccountNumber, item.NetPay, item.EmployeeName]
+        .map(escape)
+        .join(',')
+    );
+    // BOM so Excel opens the file as UTF-8
+    const blob = new Blob(['﻿' + [headers.join(','), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   statusBadgeClass(status: string): string {

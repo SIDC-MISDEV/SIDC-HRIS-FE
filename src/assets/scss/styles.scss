@@ -49,7 +49,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     // Same specificity issue as the panel-background fix above: the semi-dark
     // skin's ".menu-content .active a { background-color: transparent }" rule
     // otherwise wins over this and hides the highlight for submenu items
-    // (e.g. Payroll Approval under Attendance & Payroll).
+    // (e.g. Payroll Summary Approval under Attendance & Payroll).
     .nav-item .menu-content li.active > a,
     li.active > a {
       background-color: lighten($primary, 12%);

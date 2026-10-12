@@ -1,0 +1,35 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="payroll-allocation-approval-page">
+      <div class="d-flex mt-1 mb-1 justify-content-between">
+        <div class="col-6 ml-1 align-items-center d-flex">
+          <h4 style="margin: 0">Payroll Allocation List</h4>
+        </div>
+        <div class="col-6 mr-1 d-flex align-items-center justify-content-end">
+          <label class="mr-1 mb-0">Payroll Group:</label>
+          <select
+            [(ngModel)]="payrollGroup"
+            id="payrollGroup"
+            name="payrollGroup"
+            class="form-control"
+            style="width: auto"
+            (change)="onPayrollGroupChange()"
+          >
+            <option value="sofos2_payroll">Rank and File</option>
+            <option value="sofos2_payroll_manager">Upper Strata</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body allocation-empty-state text-center">
+          <span [data-feather]="'inbox'" [size]="40" class="text-muted mb-1"></span>
+          <h5 class="mb-50">No payroll allocations yet</h5>
+          <p class="text-muted mb-0">Payroll allocations awaiting approval will appear here.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

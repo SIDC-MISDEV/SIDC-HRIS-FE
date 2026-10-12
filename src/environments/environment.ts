@@ -14,12 +14,13 @@ export const environment = {
   apiVersionForIdentityLegacy: '1',
   apiUrlForReportGenerator: 'https://staging.api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',
-  apiUrlForReportServer: 'https://staging.api.reports.sidc.coop',
+  apiUrlForReportServer: 'https://staging.api.reports.sidcoop.org',
+  apiVersionForReportServer: '1',
 
   apiUrlForDWInventory: 'https://staging.api.dw.inventory.sidc.coop',
   apiVersionForDWInventory: '1',
 
-  apiUrlForPayroll: 'https://staging.api.payroll.sidc.coop',
+  apiUrlForPayroll: 'https://staging.api.payroll.sidcoop.org',
   apiVersionForPayroll: '1',
 
   projectCodeForReportServer: 'SC'

@@ -1,0 +1,104 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="payroll-approval-details-page">
+      <div class="d-flex mt-1 mb-1 justify-content-between">
+        <div class="col-6 ml-1 align-items-center d-flex">
+          <h4 style="margin: 0">Payroll Summary Details</h4>
+        </div>
+        <div class="col-6 mr-1 d-flex align-items-center justify-content-end">
+          <select
+            class="form-control mr-1"
+            style="width: auto"
+            #atmFilter
+            (change)="onATMFilterChange(atmFilter.value)"
+          >
+            <option value="" selected>All</option>
+            <option value="true">ATM</option>
+            <option value="false">Non-ATM</option>
+          </select>
+          <button type="button" class="btn btn-outline-secondary" (click)="back()">
+            <span data-feather="arrow-left" class="mr-25"></span>Back
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <ngx-datatable
+          #table
+          class="bootstrap core-bootstrap"
+          [columnMode]="ColumnMode.flex"
+          [headerHeight]="40"
+          [footerHeight]="50"
+          [rows]="rows"
+          rowHeight="auto"
+          [scrollbarH]="true"
+          [externalPaging]="true"
+          [count]="page.totalCount"
+          [offset]="page.pageNumber"
+          [limit]="page.size"
+          (page)="setPage($event)"
+        >
+          <ngx-datatable-column
+            prop="employeeNum"
+            name="Employee No."
+            [flexGrow]="1"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            prop="employeeName"
+            name="Employee Name"
+            [flexGrow]="2.5"
+            [sortable]="false"
+          ></ngx-datatable-column>
+          <ngx-datatable-column
+            name="Payroll Period"
+            [flexGrow]="2"
+            [sortable]="false"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              {{ row.periodFrom | date:'MMM d, y' }} - {{ row.periodTo | date:'MMM d, y' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            prop="grossPay"
+            name="Gross Pay"
+            [flexGrow]="1.5"
+            [sortable]="false"
+            headerClass="align-right"
+            cellClass="align-right"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              {{ row.grossPay | currency:'PHP ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            prop="totalDeduction"
+            name="Total Deduction"
+            [flexGrow]="1.5"
+            [sortable]="false"
+            headerClass="align-right"
+            cellClass="align-right"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              {{ row.totalDeduction | currency:'PHP ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            prop="netPay"
+            name="Net Pay"
+            [flexGrow]="1.5"
+            [sortable]="false"
+            headerClass="align-right"
+            cellClass="align-right"
+          >
+            <ng-template ngx-datatable-cell-template let-row="row">
+              {{ row.netPay | currency:'PHP ' }}
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </section>
+  </div>
+</div>

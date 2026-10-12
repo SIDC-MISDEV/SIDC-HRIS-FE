@@ -99,7 +99,9 @@ export class LoginComponent implements OnInit {
       const fullName = tokenDetails.full_name;
       const firstName = tokenDetails.first_name;
       const lastName = tokenDetails.last_name;
-      this.authService.user = {...response, fullName, firstName, lastName};
+      // only the legacy Identity token carries the employee_code claim
+      const employeeCode = legacyToken ? helper.decodeToken(legacyToken)?.employee_code || null : null;
+      this.authService.user = {...response, fullName, firstName, lastName, employeeCode};
       localStorage.setItem("currentUser", JSON.stringify(this.authService.currentUserValue));
       localStorage.setItem("token", this.authService.currentUserValue.jwToken);
       // Token from the legacy .NET 5 Identity, used by the interceptor for payroll API calls

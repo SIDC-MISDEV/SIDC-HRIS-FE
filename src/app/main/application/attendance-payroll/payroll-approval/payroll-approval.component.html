@@ -43,6 +43,7 @@
           (page)="setPage($event)"
         >
           <ngx-datatable-column
+            *ngIf="showPayrollIdColumn"
             prop="payrollId"
             name="Payroll ID"
             [flexGrow]="1"
@@ -103,21 +104,38 @@
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column
-            name="Actions"
+            name="Action"
             [flexGrow]="0.8"
             [sortable]="false"
             headerClass="align-center"
             cellClass="align-center"
           >
             <ng-template ngx-datatable-cell-template let-row="row">
-              <span
-                data-feather="eye"
-                [size]="18"
-                class="cursor-pointer"
-                style="color: #000"
-                (click)="view(row)"
-                ngbTooltip="View"
-              ></span>
+              <div ngbDropdown container="body">
+                <button
+                  ngbDropdownToggle
+                  type="button"
+                  class="btn icon-btn btn-sm hide-arrow"
+                  rippleEffect
+                >
+                  <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <!-- real link so the browser shows the target URL on hover -->
+                  <a
+                    ngbDropdownItem
+                    [routerLink]="[row.payrollId, 'report']"
+                    [queryParams]="{ group: payrollGroup }"
+                  >
+                    <span [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> View
+                  </a>
+                  <!-- export is only allowed once the payroll summary is approved -->
+                  <a href="javascript:void(0);" ngbDropdownItem [disabled]="!isApproved(row)" (click)="exportATMEmployees(row)">
+                    <span [data-feather]="'download'" [size]="16" [class]="'mr-50'"></span> Export ATM Employees (CSV)
+                    <small *ngIf="!isApproved(row)" class="d-block text-muted ml-2">Available once approved</small>
+                  </a>
+                </div>
+              </div>
             </ng-template>
           </ngx-datatable-column>
         </ngx-datatable>

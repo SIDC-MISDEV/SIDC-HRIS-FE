@@ -7,6 +7,7 @@ export class User {
   fullName?: string;
   firstName?: string;
   lastName?: string;
+  employeeCode?: string;
   email?: string;
   roles?: Role[];
   isVerified?: boolean;

@@ -3,4 +3,7 @@ export * from './createEmployeePayslipPinCommand';
 export * from './createEmployeePayslipPinPerEmployeeCommand';
 export * from './updateEmployeePayslipPinCommand';
 export * from './updateEmployeePayslipPinIsRequiredCommand';
+export * from './updatePayrollSummaryApprovedByStatusCommand';
+export * from './updatePayrollSummaryNotedByStatusCommand';
+export * from './updatePayrollSummaryStatusCommand';
 export * from './updateResetEmployeePayslipPinCommand';

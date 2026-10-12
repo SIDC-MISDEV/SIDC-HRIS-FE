@@ -41,12 +41,29 @@ export const menu: CoreMenu[] = [
     icon: 'calendar',
     children: [
       {
-        id: 'payroll-approval',
+        id: 'payroll-approval-group',
         title: 'Payroll Approval',
-        type: 'item',
+        type: 'collapsible',
         role: ['ForIncubation'],
         icon: 'check-square',
-        url: 'application/attendance-payroll/payroll-approval'
+        children: [
+          {
+            id: 'payroll-approval',
+            title: 'Payroll Summary',
+            type: 'item',
+            role: ['ForIncubation'],
+            icon: 'circle',
+            url: 'application/attendance-payroll/payroll-approval'
+          },
+          {
+            id: 'payroll-allocation-approval',
+            title: 'Payroll Allocation',
+            type: 'item',
+            role: ['ForIncubation'],
+            icon: 'circle',
+            url: 'application/attendance-payroll/payroll-allocation-approval'
+          }
+        ]
       }
     ]
   },

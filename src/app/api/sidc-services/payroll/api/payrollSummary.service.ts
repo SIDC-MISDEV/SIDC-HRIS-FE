@@ -17,6 +17,9 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { UpdatePayrollSummaryApprovedByStatusCommand } from '../model/updatePayrollSummaryApprovedByStatusCommand';
+import { UpdatePayrollSummaryNotedByStatusCommand } from '../model/updatePayrollSummaryNotedByStatusCommand';
+import { UpdatePayrollSummaryStatusCommand } from '../model/updatePayrollSummaryStatusCommand';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -59,16 +62,74 @@ export class PayrollSummaryService {
      * 
      * @param version 
      * @param database 
-     * @param payrollSummaryId 
+     * @param payrollId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet(version: string, database?: string, payrollId?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet(version: string, database?: string, payrollId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet(version: string, database?: string, payrollId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet(version: string, database?: string, payrollId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (version === null || version === undefined) {
+            throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryGetEmployeeAtmAmountGet.');
+        }
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (database !== undefined && database !== null) {
+            queryParameters = queryParameters.set('database', <any>database);
+        }
+        if (payrollId !== undefined && payrollId !== null) {
+            queryParameters = queryParameters.set('payrollId', <any>payrollId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('get',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollSummary/get-employee-atm-amount`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param version 
+     * @param database 
+     * @param payrollId 
      * @param pageNumber 
      * @param pageSize 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (version === null || version === undefined) {
             throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet.');
@@ -82,8 +143,8 @@ export class PayrollSummaryService {
         if (database !== undefined && database !== null) {
             queryParameters = queryParameters.set('database', <any>database);
         }
-        if (payrollSummaryId !== undefined && payrollSummaryId !== null) {
-            queryParameters = queryParameters.set('payrollSummaryId', <any>payrollSummaryId);
+        if (payrollId !== undefined && payrollId !== null) {
+            queryParameters = queryParameters.set('payrollId', <any>payrollId);
         }
         if (pageNumber !== undefined && pageNumber !== null) {
             queryParameters = queryParameters.set('pageNumber', <any>pageNumber);
@@ -128,19 +189,21 @@ export class PayrollSummaryService {
      * @param version 
      * @param database 
      * @param payrollId 
+     * @param isATM 
      * @param pageNumber 
      * @param pageSize 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, isATM?: boolean, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, isATM?: boolean, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, isATM?: boolean, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet(version: string, database?: string, payrollId?: string, isATM?: boolean, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (version === null || version === undefined) {
             throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryGetPayrollSummaryDetailsGet.');
         }
+
 
 
 
@@ -152,6 +215,9 @@ export class PayrollSummaryService {
         }
         if (payrollId !== undefined && payrollId !== null) {
             queryParameters = queryParameters.set('payrollId', <any>payrollId);
+        }
+        if (isATM !== undefined && isATM !== null) {
+            queryParameters = queryParameters.set('isATM', <any>isATM);
         }
         if (pageNumber !== undefined && pageNumber !== null) {
             queryParameters = queryParameters.set('pageNumber', <any>pageNumber);
@@ -245,6 +311,171 @@ export class PayrollSummaryService {
         return this.httpClient.request<any>('get',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollSummary/get-payroll-summary`,
             {
                 params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param version 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut(version: string, body?: UpdatePayrollSummaryApprovedByStatusCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut(version: string, body?: UpdatePayrollSummaryApprovedByStatusCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut(version: string, body?: UpdatePayrollSummaryApprovedByStatusCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut(version: string, body?: UpdatePayrollSummaryApprovedByStatusCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (version === null || version === undefined) {
+            throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollSummary/update-approved-by-status`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param version 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut(version: string, body?: UpdatePayrollSummaryNotedByStatusCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut(version: string, body?: UpdatePayrollSummaryNotedByStatusCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut(version: string, body?: UpdatePayrollSummaryNotedByStatusCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut(version: string, body?: UpdatePayrollSummaryNotedByStatusCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (version === null || version === undefined) {
+            throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollSummary/update-noted-by-status`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param version 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(version: string, body?: UpdatePayrollSummaryStatusCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(version: string, body?: UpdatePayrollSummaryStatusCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(version: string, body?: UpdatePayrollSummaryStatusCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(version: string, body?: UpdatePayrollSummaryStatusCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (version === null || version === undefined) {
+            throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollSummary/update-payroll-summary-status`,
+            {
+                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
