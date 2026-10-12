@@ -1,0 +1,13 @@
+export * from './changePassword.service';
+import { ChangePasswordService } from './changePassword.service';
+export * from './identity.service';
+import { IdentityService } from './identity.service';
+export * from './identityBranch.service';
+import { IdentityBranchService } from './identityBranch.service';
+export * from './identityRegion.service';
+import { IdentityRegionService } from './identityRegion.service';
+export * from './identityWarehouse.service';
+import { IdentityWarehouseService } from './identityWarehouse.service';
+export * from './role.service';
+import { RoleService } from './role.service';
+export const APIS = [ChangePasswordService, IdentityService, IdentityBranchService, IdentityRegionService, IdentityWarehouseService, RoleService];

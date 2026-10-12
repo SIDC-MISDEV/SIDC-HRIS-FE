@@ -19,7 +19,6 @@ import { AuthService } from 'app/common/services/auth.service';
 export class VerticalMenuComponent implements OnInit, OnDestroy {
   coreConfig: any;
   menu: any;
-  isCollapsed: boolean;
   isScrolled: boolean = false;
   public userValue: any = {
     username: null,
@@ -63,8 +62,6 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
-
-    this.isCollapsed = this._coreSidebarService.getSidebarRegistry('menu').collapsed;
 
     this.userValue.username = this._authService.currentUserValue.userName;
     this.userValue.fullname = this._authService.currentUserValue.fullName;
@@ -130,28 +127,10 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Toggle sidebar expanded status
+   * Logout
    */
-  toggleSidebar(): void {
-    this._coreSidebarService.getSidebarRegistry('menu').toggleOpen();
-  }
-
-  /**
-   * Toggle sidebar collapsed status
-   */
-  toggleSidebarCollapsible(): void {
-    // Get the current menu state
-    this._coreConfigService
-      .getConfig()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(config => {
-        this.isCollapsed = config.layout.menu.collapsed;
-      });
-
-    if (this.isCollapsed) {
-      this._coreConfigService.setConfig({ layout: { menu: { collapsed: false } } }, { emitEvent: true });
-    } else {
-      this._coreConfigService.setConfig({ layout: { menu: { collapsed: true } } }, { emitEvent: true });
-    }
+  logout(): void {
+    this._authService.clearSession();
+    this._router.navigate(['/auth/login']);
   }
 }

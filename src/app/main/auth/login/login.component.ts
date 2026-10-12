@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
 //import { IdentityService } from 'app/api';
@@ -13,6 +13,7 @@ import { AuthService } from 'app/common/services/auth.service';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { IdentityService } from 'app/api/sidc-services/identity';
+import { IdentityService as IdentityLegacyService } from 'app/api/sidc-services/identity-legacy';
 
 @Component({
   selector: 'app-login',
@@ -42,6 +43,7 @@ export class LoginComponent implements OnInit {
     private coreConfigService: CoreConfigService,
     private formBuilder: FormBuilder,
     private identityService: IdentityService,
+    private identityLegacyService: IdentityLegacyService,
     private authService: AuthService,
     private router: Router,
     private toastr: ToastrService) {
@@ -90,16 +92,24 @@ export class LoginComponent implements OnInit {
 
     this.blockUI.start();
 
-    this.identityService.apiIdentityTokenPost(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+    this.requestTokens(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe(({ response, legacyToken }) => {
       this.blockUI.stop();
       const helper = new JwtHelperService();
-      const tokenDetails = helper.decodeToken(response.data.jwToken);
+      const tokenDetails = helper.decodeToken(response.jwToken);
       const fullName = tokenDetails.full_name;
       const firstName = tokenDetails.first_name;
       const lastName = tokenDetails.last_name;
-      this.authService.user = {...response.data, fullName, firstName, lastName};
+      // only the legacy Identity token carries the employee_code claim
+      const employeeCode = legacyToken ? helper.decodeToken(legacyToken)?.employee_code || null : null;
+      this.authService.user = {...response, fullName, firstName, lastName, employeeCode};
       localStorage.setItem("currentUser", JSON.stringify(this.authService.currentUserValue));
       localStorage.setItem("token", this.authService.currentUserValue.jwToken);
+      // Token from the legacy .NET 5 Identity, used by the interceptor for payroll API calls
+      if (legacyToken) {
+        localStorage.setItem("legacyToken", legacyToken);
+      } else {
+        localStorage.removeItem("legacyToken");
+      }
       // if (this.authService.isAdmin) {
       //   this.router.navigate(["/admin/"]);
       // } else {
@@ -110,13 +120,39 @@ export class LoginComponent implements OnInit {
     }, (httpError: HttpErrorResponse) => {
 
       this.blockUI.stop();
-      this.toastr.error('', httpError.error.Message, {
+      this.toastr.error('', httpError.error?.detail || httpError.error?.title, {
         timeOut: 3000,
         positionClass: 'toast-bottom-center',
         toastClass: 'toast ngx-toastr',
       });
      
     });
+  }
+
+  /**
+   * Sign in against both the .NET 10 Identity and the legacy .NET 5 Identity.
+   * `response` is the session used by the app (.NET 10, or legacy when .NET 10 fails) and
+   * `legacyToken` is the legacy JWT (null when the legacy sign-in failed).
+   * Errors only when both fail, surfacing the .NET 10 error.
+   */
+  private requestTokens(credentials: { username: string; password: string }): Observable<{ response: any; legacyToken: string | null }> {
+    const identity$ = this.identityService.token(credentials).pipe(
+      map(response => ({ response, error: null as HttpErrorResponse | null })),
+      catchError((error: HttpErrorResponse) => of({ response: null, error }))
+    );
+    const legacy$ = this.identityLegacyService.apiIdentityTokenPost(credentials).pipe(
+      map(response => response.data),
+      catchError(() => of(null))
+    );
+
+    return forkJoin([identity$, legacy$]).pipe(
+      switchMap(([identity, legacy]) => {
+        const response = identity.response ?? legacy;
+        return response
+          ? of({ response, legacyToken: legacy?.jwToken ?? null })
+          : throwError(identity.error);
+      })
+    );
   }
 
   // Lifecycle Hooks
@@ -127,7 +163,7 @@ export class LoginComponent implements OnInit {
    */
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['jamikee', [Validators.required]],
+      username: ['', [Validators.required]],
       password: ['', Validators.required]
     });
 

@@ -3,7 +3,11 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { ChangePasswordService } from './api/changePassword.service';
 import { IdentityService } from './api/identity.service';
+import { IdentityBranchService } from './api/identityBranch.service';
+import { IdentityRegionService } from './api/identityRegion.service';
+import { IdentityWarehouseService } from './api/identityWarehouse.service';
 import { RoleService } from './api/role.service';
 
 @NgModule({
@@ -11,7 +15,11 @@ import { RoleService } from './api/role.service';
   declarations: [],
   exports:      [],
   providers: [
+    ChangePasswordService,
     IdentityService,
+    IdentityBranchService,
+    IdentityRegionService,
+    IdentityWarehouseService,
     RoleService ]
 })
 export class ApiModule {

@@ -85,23 +85,23 @@ export class ForgotPasswordComponent implements OnInit {
     const { username } = this.forgotPasswordForm.getRawValue();
     const isEmailAddress = username.indexOf("@") > 0 ? true: false;
 
-    // this.identityService.apiIdentityForgotPasswordPost({username, isEmailAddress}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
-    //   this.blockUI.stop();
-    //   const device = isEmailAddress ? 'email' : 'phone';
-    //   this.toastr.success('', "OTP was sent to your " + device + '.', {
-    //     timeOut: 3000,
-    //     positionClass: 'toast-bottom-center',
-    //     toastClass: 'toast ngx-toastr',
-    //   });
-    //   this.router.navigate(['/auth/reset-password'], { queryParams: { username } });
-    // }, (httpError: HttpErrorResponse) => {
-    //   this.blockUI.stop();
-    //   this.toastr.error('', httpError.error.Message, {
-    //     timeOut: 3000,
-    //     positionClass: 'toast-bottom-center',
-    //     toastClass: 'toast ngx-toastr',
-    //   });
-    // });
+    this.identityService.forgotPassword({email: username, isEmailAddress}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+      this.blockUI.stop();
+      const device = isEmailAddress ? 'email' : 'phone';
+      this.toastr.success('', "OTP was sent to your " + device + '.', {
+        timeOut: 3000,
+        positionClass: 'toast-bottom-center',
+        toastClass: 'toast ngx-toastr',
+      });
+      this.router.navigate(['/auth/reset-password'], { queryParams: { username } });
+    }, (httpError: HttpErrorResponse) => {
+      this.blockUI.stop();
+      this.toastr.error('', httpError.error?.detail || httpError.error?.title, {
+        timeOut: 3000,
+        positionClass: 'toast-bottom-center',
+        toastClass: 'toast ngx-toastr',
+      });
+    });
   }
 
   // Lifecycle Hooks

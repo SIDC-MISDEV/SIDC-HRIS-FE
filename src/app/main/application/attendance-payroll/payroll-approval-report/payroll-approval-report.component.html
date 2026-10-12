@@ -1,0 +1,120 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="payroll-approval-report-page">
+      <!-- Approval status strip (payroll summary approver API) -->
+      <div class="card approval-strip">
+        <div class="card-body d-flex align-items-center flex-wrap">
+          <div class="approval-strip-title mr-2">
+            <h5 class="mb-0">Approval Status</h5>
+          </div>
+
+          <div *ngIf="approversLoading" class="text-muted">Loading approvers...</div>
+          <div *ngIf="!approversLoading && approversError" class="text-danger">{{ approversError }}</div>
+          <div *ngIf="!approversLoading && !approversError && approvers.length === 0" class="text-muted">
+            No approvers assigned to this payroll yet.
+          </div>
+
+          <div *ngIf="!approversLoading && approvers.length" class="approval-steps d-flex align-items-center flex-grow-1">
+            <ng-container *ngFor="let approver of approvers; let i = index; let last = last">
+              <div class="approval-step flex-grow-1" [class.approval-step-active]="canAct(i)">
+                <div class="d-flex align-items-center">
+                  <div class="approval-step-number badge badge-pill" [ngClass]="statusBadgeClass(approver.status)">{{ i + 1 }}</div>
+                  <div class="flex-grow-1 mx-1">
+                    <small class="text-muted d-block">{{ approver.role }}</small>
+                    <div class="font-weight-bolder">{{ approver.name || '—' }}</div>
+                    <small class="text-muted">{{ approver.position }}</small>
+                  </div>
+                  <span class="badge badge-pill status-badge" [ngClass]="statusBadgeClass(approver.status)">
+                    {{ approver.status || 'PENDING' }}
+                  </span>
+                </div>
+                <!-- decision buttons for the logged-in approver when it is their turn -->
+                <div *ngIf="canAct(i)" class="approval-actions d-flex justify-content-end mt-1">
+                  <button type="button" class="btn btn-sm btn-outline-danger mr-50" [disabled]="actionInProgress"
+                    (click)="onDecision(approver, 'REJECTED')">
+                    Reject
+                  </button>
+                  <button type="button" class="btn btn-sm btn-success" [disabled]="actionInProgress"
+                    (click)="onDecision(approver, 'APPROVED')">
+                    Approve
+                  </button>
+                </div>
+              </div>
+              <svg *ngIf="!last" class="text-muted mx-1" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+              </svg>
+            </ng-container>
+          </div>
+
+          <!-- final approval saved but payroll summary status not updated -->
+          <div *ngIf="isSummaryOutOfSync" class="alert alert-warning w-100 mt-1 mb-0" role="alert">
+            <div class="alert-body d-flex align-items-center justify-content-between flex-wrap">
+              <span *ngIf="isFinalApprover">
+                Final approval was saved, but the payroll summary status wasn't updated. Please retry.
+              </span>
+              <span *ngIf="!isFinalApprover">
+                Final approval was saved, but the payroll summary status wasn't updated. Please inform the final approver.
+              </span>
+              <button *ngIf="isFinalApprover" type="button" class="btn btn-sm btn-warning" [disabled]="retryingSummaryStatus"
+                (click)="retrySummaryStatus()">
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card" style="height: 750px;">
+            <div class="card-header report-filter">
+              <div class="d-flex align-items-center">
+                <span class="font-weight-bolder mr-1">Employees</span>
+                <div class="btn-group" role="group" aria-label="Filter employees by payment method">
+                  <button
+                    *ngFor="let option of atmFilterOptions"
+                    type="button"
+                    class="btn btn-sm"
+                    [ngClass]="isATM === option.value ? 'btn-primary' : 'btn-outline-primary'"
+                    [attr.aria-pressed]="isATM === option.value"
+                    [disabled]="!reportData"
+                    (click)="onATMFilterChange(option.value)"
+                  >
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- position-relative so the absolutely positioned viewer stays below the filter header -->
+            <div class="card-body pb-1 position-relative">
+              <tr-viewer
+                #viewer1
+                [serviceUrl]="serviceUrl"
+                [reportSource]="reportSource"
+                [parameters]="{
+                  editors: {
+                    singleSelect: 'COMBO_BOX',
+                    multiSelect: 'COMBO_BOX'
+                  }
+                }"
+                [parametersAreaPosition]="'LEFT'"
+                [parametersAreaVisible]="false"
+                [containerStyle]="viewerContainerStyle"
+                [viewMode]="'PRINT_PREVIEW'"
+                [scaleMode]="'SPECIFIC'"
+                [scale]="1.0"
+                [enableAccessibility]="false"
+                [updateUi]="onUpdateUi"
+              >
+              </tr-viewer>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

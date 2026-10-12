@@ -89,7 +89,7 @@ export class ResetPasswordComponent implements OnInit {
 
     this.blockUI.start();
 
-    this.identityService.apiIdentityResetPasswordPost({username: this.username, ...this.resetPasswordForm.getRawValue()}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+    this.identityService.resetPassword({email: this.username, ...this.resetPasswordForm.getRawValue()}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
       this.blockUI.stop();
       this.toastr.success('', 'Password has been changed.', {
         timeOut: 3000,
@@ -100,7 +100,7 @@ export class ResetPasswordComponent implements OnInit {
     }, (httpError: HttpErrorResponse) => {
 
       this.blockUI.stop();
-      this.toastr.error('', httpError.error.Message, {
+      this.toastr.error('', httpError.error?.detail || httpError.error?.title, {
         timeOut: 3000,
         positionClass: 'toast-bottom-center',
         toastClass: 'toast ngx-toastr',

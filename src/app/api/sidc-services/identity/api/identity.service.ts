@@ -1,6 +1,6 @@
 /**
- * SIDC Identity Core
- * Our Endpoints are powered by .Net Core, Onion Architecture, CQRS with MediatR Library,Entity Framework Core - Code First,Repository Pattern - Generic, Swagger UI, API Versioning,Fluent Validation and Automapper.
+ * Identity API
+ * A production-ready Clean Architecture template for .NET 10 by Mukesh Murugan
  *
  * OpenAPI spec version: v1
  * Contact: sidcmisdepartment@gmail.com
@@ -17,11 +17,12 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { ForgotPasswordRequest } from '../model/forgotPasswordRequest';
-import { RegisterRequest } from '../model/registerRequest';
-import { ResetPasswordRequest } from '../model/resetPasswordRequest';
-import { TokenRequest } from '../model/tokenRequest';
-import { UpdateUserRolesRequest } from '../model/updateUserRolesRequest';
+import { AssignRoleCommand } from '../model/assignRoleCommand';
+import { BulkRegisterItem } from '../model/bulkRegisterItem';
+import { ForgotPasswordCommand } from '../model/forgotPasswordCommand';
+import { RegisterCommand } from '../model/registerCommand';
+import { ResetPasswordCommand } from '../model/resetPasswordCommand';
+import { TokenCommand } from '../model/tokenCommand';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -60,35 +61,149 @@ export class IdentityService {
 
 
     /**
+     * Assign roles to a user
      * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public assignRole(body: AssignRoleCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public assignRole(body: AssignRoleCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public assignRole(body: AssignRoleCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public assignRole(body: AssignRoleCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling assignRole.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('post',`${this.basePath}/api/identity/identity-role`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Register multiple users at once
+     * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public bulkRegister(body: Array<BulkRegisterItem>, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public bulkRegister(body: Array<BulkRegisterItem>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public bulkRegister(body: Array<BulkRegisterItem>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public bulkRegister(body: Array<BulkRegisterItem>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling bulkRegister.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('post',`${this.basePath}/api/identity/bulk-register`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Confirm user email address
      * 
      * @param userId 
      * @param code 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityConfirmEmailGet(userId?: string, code?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityConfirmEmailGet(userId?: string, code?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityConfirmEmailGet(userId?: string, code?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityConfirmEmailGet(userId?: string, code?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public confirmEmail(userId: string, code: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public confirmEmail(userId: string, code: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public confirmEmail(userId: string, code: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public confirmEmail(userId: string, code: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling confirmEmail.');
+        }
 
+        if (code === null || code === undefined) {
+            throw new Error('Required parameter code was null or undefined when calling confirmEmail.');
+        }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (userId !== undefined && userId !== null) {
-            queryParameters = queryParameters.set('userId', <any>userId);
+            queryParameters = queryParameters.set('UserId', <any>userId);
         }
         if (code !== undefined && code !== null) {
-            queryParameters = queryParameters.set('code', <any>code);
+            queryParameters = queryParameters.set('Code', <any>code);
         }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -113,25 +228,30 @@ export class IdentityService {
     }
 
     /**
-     * 
+     * Generate a password reset token
      * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityForgotPasswordPost(body?: ForgotPasswordRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityForgotPasswordPost(body?: ForgotPasswordRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityForgotPasswordPost(body?: ForgotPasswordRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityForgotPasswordPost(body?: ForgotPasswordRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public forgotPassword(body: ForgotPasswordCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public forgotPassword(body: ForgotPasswordCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public forgotPassword(body: ForgotPasswordCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public forgotPassword(body: ForgotPasswordCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling forgotPassword.');
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -142,9 +262,7 @@ export class IdentityService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
+            'application/json'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
@@ -163,25 +281,35 @@ export class IdentityService {
     }
 
     /**
+     * Get user ID by username
      * 
-     * 
-     * @param body 
+     * @param userName 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityIdentityRolePost(body?: UpdateUserRolesRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityIdentityRolePost(body?: UpdateUserRolesRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityIdentityRolePost(body?: UpdateUserRolesRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityIdentityRolePost(body?: UpdateUserRolesRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getUserIdByUsername(userName: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getUserIdByUsername(userName: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getUserIdByUsername(userName: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getUserIdByUsername(userName: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (userName === null || userName === undefined) {
+            throw new Error('Required parameter userName was null or undefined when calling getUserIdByUsername.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (userName !== undefined && userName !== null) {
+            queryParameters = queryParameters.set('UserName', <any>userName);
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -192,18 +320,11 @@ export class IdentityService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
         ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/identity/identity-role`,
+        return this.httpClient.request<any>('get',`${this.basePath}/api/identity/get-userId-by-username`,
             {
-                body: body,
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -213,25 +334,30 @@ export class IdentityService {
     }
 
     /**
-     * 
+     * Register a new user
      * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityRegisterPost(body?: RegisterRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityRegisterPost(body?: RegisterRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityRegisterPost(body?: RegisterRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityRegisterPost(body?: RegisterRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public register(body: RegisterCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public register(body: RegisterCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public register(body: RegisterCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public register(body: RegisterCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling register.');
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -242,9 +368,7 @@ export class IdentityService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
+            'application/json'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
@@ -263,25 +387,30 @@ export class IdentityService {
     }
 
     /**
-     * 
+     * Reset user password using a reset token
      * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityResetPasswordPost(body?: ResetPasswordRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityResetPasswordPost(body?: ResetPasswordRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityResetPasswordPost(body?: ResetPasswordRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityResetPasswordPost(body?: ResetPasswordRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public resetPassword(body: ResetPasswordCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public resetPassword(body: ResetPasswordCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public resetPassword(body: ResetPasswordCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public resetPassword(body: ResetPasswordCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling resetPassword.');
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -292,9 +421,7 @@ export class IdentityService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
+            'application/json'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
@@ -313,25 +440,30 @@ export class IdentityService {
     }
 
     /**
-     * 
+     * Get token using username and password
      * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiIdentityTokenPost(body?: TokenRequest, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiIdentityTokenPost(body?: TokenRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiIdentityTokenPost(body?: TokenRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiIdentityTokenPost(body?: TokenRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public token(body: TokenCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public token(body: TokenCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public token(body: TokenCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public token(body: TokenCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling token.');
+        }
 
         let headers = this.defaultHeaders;
 
         // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
         }
-
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
         ];
@@ -342,9 +474,7 @@ export class IdentityService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json',
-            'text/json',
-            'application/_*+json'
+            'application/json'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {

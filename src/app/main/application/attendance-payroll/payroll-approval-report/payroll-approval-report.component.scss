@@ -1,0 +1,54 @@
+.report-filter {
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+
+  .btn-group .btn {
+    min-width: 80px;
+  }
+}
+
+.approval-strip {
+  .approval-strip-title {
+    min-width: 150px;
+  }
+
+  .approval-steps {
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .approval-step {
+    border: 1px solid #ebe9f1;
+    border-radius: 0.428rem;
+    padding: 0.75rem 1rem;
+    min-width: 260px;
+  }
+
+  // highlights the card the logged-in approver needs to act on
+  .approval-step-active {
+    border-color: #28c76f;
+    box-shadow: 0 0 0 1px rgba(40, 199, 111, 0.25);
+  }
+
+  .approval-actions .btn {
+    min-width: 90px;
+  }
+
+  .approval-step-number {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .status-badge {
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.3px;
+    padding: 0.45em 0.9em;
+  }
+}
