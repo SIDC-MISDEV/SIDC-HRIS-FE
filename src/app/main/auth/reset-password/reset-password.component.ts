@@ -3,7 +3,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreConfigService } from '@core/services/config.service';
-import { IdentityService } from 'app/api/sidc-services/identity';
+// import { IdentityService } from 'app/api/sidc-services/identity';
+import { IdentityService } from 'app/api/sidc-services/identity-legacy';
 import { MustMatchValidator } from 'app/common/ui/validators/mustmatch.validator';
 import { PasswordValidator } from 'app/common/ui/validators/password.validator';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
@@ -89,7 +90,7 @@ export class ResetPasswordComponent implements OnInit {
 
     this.blockUI.start();
 
-    this.identityService.resetPassword({email: this.username, ...this.resetPasswordForm.getRawValue()}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+    this.identityService.apiIdentityResetPasswordPost({email: this.username, ...this.resetPasswordForm.getRawValue()}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
       this.blockUI.stop();
       this.toastr.success('', 'Password has been changed.', {
         timeOut: 3000,

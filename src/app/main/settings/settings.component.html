@@ -1,0 +1,38 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+      <div class="settings-page">
+  
+        <div class="mb-2">
+          <!-- <h2 class="mb-25">Settings</h2> -->
+          <p class="text-muted mb-0">Manage your account security and preferences.</p>
+        </div>
+  
+        <!-- Security -->
+        <div class="card settings-card">
+          <div class="card-header">
+            <h4 class="card-title mb-0">
+              <span [data-feather]="'shield'" [class]="'mr-50'"></span> Security
+            </h4>
+          </div>
+          <div class="card-body p-0">
+            <div class="settings-item">
+              <div class="settings-item-icon bg-light-primary">
+                <span [data-feather]="'lock'"></span>
+              </div>
+              <div class="settings-item-text">
+                <h6 class="mb-25">Password</h6>
+                <small class="text-muted">Update your password to keep your account secure.</small>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="goToChangePassword()" rippleEffect>
+                <span [data-feather]="'key'" [class]="'mr-50'"></span> Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Add more sections here (Preferences, Notifications, etc.) -->
+  
+      </div>
+    </div>
+  </div>
