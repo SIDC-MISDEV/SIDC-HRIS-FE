@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { AppAccessService } from './api/appAccess.service';
 import { ChangePasswordService } from './api/changePassword.service';
 import { IdentityService } from './api/identity.service';
 import { IdentityBranchService } from './api/identityBranch.service';
@@ -15,6 +16,7 @@ import { RoleService } from './api/role.service';
   declarations: [],
   exports:      [],
   providers: [
+    AppAccessService,
     ChangePasswordService,
     IdentityService,
     IdentityBranchService,

@@ -47,12 +47,7 @@ export class ApiInterceptor  implements HttpInterceptor {
           this.authService.clearSession();
           this.router.navigate(["/"]);
         }
-        // Payroll API and Report Server trust the legacy (.NET 5) Identity, so they get the legacy token
-        const legacyToken: string | null = localStorage.getItem('legacyToken');
-        const usesLegacyIdentity =
-          request.url.startsWith(environment.apiUrlForPayroll) || request.url.startsWith(environment.apiUrlForReportServer);
-        const bearerToken = legacyToken && usesLegacyIdentity ? legacyToken : token;
-        request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + bearerToken) });
+        request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
     }
 
     if (!request.headers.has('Content-Type')) {

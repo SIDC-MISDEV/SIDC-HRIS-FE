@@ -13,7 +13,8 @@ export class AdminGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const currentUser = this.auth.currentUserValue;
 
-    if (currentUser && this.auth.isAuthenticated) {
+    // a session without access to this app (or from before app access existed) must sign in again
+    if (currentUser && this.auth.isAuthenticated && this.auth.hasApplicationAccess) {
       // if (currentUser.roles[0] !== Role.Admin) {
       //   this.router.navigate(['/error/unauthorized']);
       //   return false;
