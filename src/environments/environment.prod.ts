@@ -5,8 +5,8 @@ export const environment = {
   apiVersion: '1',
   apiUrlForIdentity: 'https://api.identity.sidc.coop',
   apiVersionForIdentity: '1',
-  apiUrlForIdentityLegacy: 'https://api.identity.sidc.coop',
-  apiVersionForIdentityLegacy: '1',
+  // apiUrlForIdentityLegacy: 'https://api.identity.sidc.coop',
+  // apiVersionForIdentityLegacy: '1',
   apiUrlForReportGenerator: 'https://api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',
   apiUrlForReportServer: 'https://api.reports.sidc.coop',
@@ -20,6 +20,9 @@ export const environment = {
   apiUrlForPayroll: 'https://api.payroll.sidc.coop',
   apiVersionForPayroll: '1',
   projectCodeForReportServer: 'SC',
+
+  // Application code in the Identity token response that grants access to this app
+  applicationCode: 'HRIS',
 
   sapHanaApiSetting: {
     baseUrl: 'https://hana.gateway.sidc.coop',

@@ -10,36 +10,44 @@ import { PayrollApprovalComponent } from './payroll-approval/payroll-approval.co
 import { PayrollApprovalDetailsComponent } from './payroll-approval-details/payroll-approval-details.component';
 import { PayrollApprovalReportComponent } from './payroll-approval-report/payroll-approval-report.component';
 import { PayrollAllocationApprovalComponent } from './payroll-allocation-approval/payroll-allocation-approval.component';
-import { BASE_PATH as BASE_PATH_PAYROLL, PayrollSummaryService } from 'app/api/sidc-services/payroll';
+import { EnterPinModalComponent } from './payroll-pin/enter-pin-modal.component';
+import { ChangePinModalComponent } from './payroll-pin/change-pin-modal.component';
+import { BASE_PATH as BASE_PATH_PAYROLL, PayrollSummaryService, PayslipService } from 'app/api/sidc-services/payroll';
 import { BASE_PATH as BASE_PATH_REPORT_SERVER, ProjectReportTemplateService } from 'app/api/sidc-services/reportserver';
 import { TelerikReportingModule } from '@progress/telerik-angular-report-viewer';
 import { environment } from 'environments/environment';
+import { ModuleGuard } from 'app/common/guards/module.guard';
+import { ModuleCode } from 'app/common/models/app-access';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'payroll-approval',
+    redirectTo: 'payroll-summary-approval',
     pathMatch: 'full'
   },
   {
-    path: 'payroll-approval',
+    path: 'payroll-summary-approval',
     component: PayrollApprovalComponent,
-    data: { title: 'Payroll Summary Approval' }
+    canActivate: [ModuleGuard],
+    data: { title: 'Payroll Summary Approval', moduleCode: ModuleCode.PayrollSummary }
   },
   {
-    path: 'payroll-approval/:id',
+    path: 'payroll-summary-approval/:id',
     component: PayrollApprovalDetailsComponent,
-    data: { title: 'Payroll Summary Approval Details' }
+    canActivate: [ModuleGuard],
+    data: { title: 'Payroll Summary Approval Details', moduleCode: ModuleCode.PayrollSummary }
   },
   {
-    path: 'payroll-approval/:id/report',
+    path: 'payroll-summary-approval/:id/report',
     component: PayrollApprovalReportComponent,
-    data: { title: 'Payroll Summary Report' }
+    canActivate: [ModuleGuard],
+    data: { title: 'Payroll Summary Report', moduleCode: ModuleCode.PayrollSummary }
   },
   {
     path: 'payroll-allocation-approval',
     component: PayrollAllocationApprovalComponent,
-    data: { title: 'Payroll Allocation Approval' }
+    canActivate: [ModuleGuard],
+    data: { title: 'Payroll Allocation Approval', moduleCode: ModuleCode.PayrollAllocation }
   }
 ];
 
@@ -48,7 +56,9 @@ const routes: Routes = [
     PayrollApprovalComponent,
     PayrollApprovalDetailsComponent,
     PayrollApprovalReportComponent,
-    PayrollAllocationApprovalComponent
+    PayrollAllocationApprovalComponent,
+    EnterPinModalComponent,
+    ChangePinModalComponent
   ],
   imports: [
     CommonModule,
@@ -64,6 +74,7 @@ const routes: Routes = [
     { provide: BASE_PATH_PAYROLL, useValue: environment.apiUrlForPayroll },
     { provide: BASE_PATH_REPORT_SERVER, useValue: environment.apiUrlForReportServer },
     PayrollSummaryService,
+    PayslipService,
     ProjectReportTemplateService
   ]
 })

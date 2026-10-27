@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
-import { forkJoin, Observable, of, Subject, throwError } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
 //import { IdentityService } from 'app/api';
@@ -13,7 +13,7 @@ import { AuthService } from 'app/common/services/auth.service';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { IdentityService } from 'app/api/sidc-services/identity';
-import { IdentityService as IdentityLegacyService } from 'app/api/sidc-services/identity-legacy';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -43,7 +43,6 @@ export class LoginComponent implements OnInit {
     private coreConfigService: CoreConfigService,
     private formBuilder: FormBuilder,
     private identityService: IdentityService,
-    private identityLegacyService: IdentityLegacyService,
     private authService: AuthService,
     private router: Router,
     private toastr: ToastrService) {
@@ -92,24 +91,42 @@ export class LoginComponent implements OnInit {
 
     this.blockUI.start();
 
-    this.requestTokens(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe(({ response, legacyToken }) => {
+    this.identityService.token(this.loginForm.getRawValue()).pipe(takeUntil(this.unsubscribeAll)).subscribe((result) => {
       this.blockUI.stop();
+      // .NET 10 Identity returns the session directly; tolerate a { data } envelope too
+      const response = result?.data ?? result;
+      // TODO: remove — temporary debug for the HRIS application access check
+      console.log('[login] token response', result);
+      console.log('[login] applications', response?.applications, 'expected code', environment.applicationCode);
       const helper = new JwtHelperService();
-      const tokenDetails = helper.decodeToken(response.jwToken);
+      const tokenDetails = helper.decodeToken(response?.jwToken);
+      if (!tokenDetails) {
+        this.toastr.error('', 'Sign-in succeeded but no token was returned.', {
+          timeOut: 3000,
+          positionClass: 'toast-bottom-center',
+          toastClass: 'toast ngx-toastr',
+        });
+        return;
+      }
+      // the token response lists the applications the user may open
+      const hasApplicationAccess = (response.applications ?? []).some(app => app.code === environment.applicationCode);
+      if (!hasApplicationAccess) {
+        this.toastr.error('', 'Your account does not have access to this application.', {
+          timeOut: 3000,
+          positionClass: 'toast-bottom-center',
+          toastClass: 'toast ngx-toastr',
+        });
+        return;
+      }
       const fullName = tokenDetails.full_name;
       const firstName = tokenDetails.first_name;
       const lastName = tokenDetails.last_name;
-      // only the legacy Identity token carries the employee_code claim
-      const employeeCode = legacyToken ? helper.decodeToken(legacyToken)?.employee_code || null : null;
+      const employeeCode = tokenDetails.employee_code || null;
       this.authService.user = {...response, fullName, firstName, lastName, employeeCode};
       localStorage.setItem("currentUser", JSON.stringify(this.authService.currentUserValue));
       localStorage.setItem("token", this.authService.currentUserValue.jwToken);
-      // Token from the legacy .NET 5 Identity, used by the interceptor for payroll API calls
-      if (legacyToken) {
-        localStorage.setItem("legacyToken", legacyToken);
-      } else {
-        localStorage.removeItem("legacyToken");
-      }
+      // drop a token left over from the former legacy (.NET 5) sign-in
+      localStorage.removeItem("legacyToken");
       // if (this.authService.isAdmin) {
       //   this.router.navigate(["/admin/"]);
       // } else {
@@ -129,32 +146,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  /**
-   * Sign in against both the .NET 10 Identity and the legacy .NET 5 Identity.
-   * `response` is the session used by the app (.NET 10, or legacy when .NET 10 fails) and
-   * `legacyToken` is the legacy JWT (null when the legacy sign-in failed).
-   * Errors only when both fail, surfacing the .NET 10 error.
-   */
-  private requestTokens(credentials: { username: string; password: string }): Observable<{ response: any; legacyToken: string | null }> {
-    const identity$ = this.identityService.token(credentials).pipe(
-      map(response => ({ response, error: null as HttpErrorResponse | null })),
-      catchError((error: HttpErrorResponse) => of({ response: null, error }))
-    );
-    const legacy$ = this.identityLegacyService.apiIdentityTokenPost(credentials).pipe(
-      map(response => response.data),
-      catchError(() => of(null))
-    );
-
-    return forkJoin([identity$, legacy$]).pipe(
-      switchMap(([identity, legacy]) => {
-        const response = identity.response ?? legacy;
-        return response
-          ? of({ response, legacyToken: legacy?.jwToken ?? null })
-          : throwError(identity.error);
-      })
-    );
-  }
-
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
 
@@ -172,14 +163,12 @@ export class LoginComponent implements OnInit {
         // You can access the previous URL here if needed
         const previousUrl = this.router.url;
         sessionStorage.setItem("previousUrl", previousUrl);
-        console.log("previousUrl", previousUrl);
       }
 
       if (event instanceof NavigationEnd) {
         // Access the current URL after navigation is complete
         const currentUrl = this.router.url;
         sessionStorage.setItem("currentUrl", currentUrl);
-        console.log("currentUrl", currentUrl);
       }
     });
 

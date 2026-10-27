@@ -1,6 +1,7 @@
 export * from './bulkCreateEmployeePayslipPinPerEmployeeCommand';
 export * from './createEmployeePayslipPinCommand';
 export * from './createEmployeePayslipPinPerEmployeeCommand';
+export * from './sendEmailCommand';
 export * from './updateEmployeePayslipPinCommand';
 export * from './updateEmployeePayslipPinIsRequiredCommand';
 export * from './updatePayrollSummaryApprovedByStatusCommand';

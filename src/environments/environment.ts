@@ -10,8 +10,8 @@ export const environment = {
   apiUrlForIdentity: 'https://staging.api.identity.ten.sidcoop.org',
   apiVersionForIdentity: '1',
   // Previous Identity host, kept alongside the .NET 10 one above
-  apiUrlForIdentityLegacy: 'https://staging.api.identity.sidcoop.org',
-  apiVersionForIdentityLegacy: '1',
+  // apiUrlForIdentityLegacy: 'https://staging.api.identity.sidcoop.org',
+  // apiVersionForIdentityLegacy: '1',
   apiUrlForReportGenerator: 'https://staging.api.dw.reportgenerator.sidc.coop',
   apiVersionForReportGenerator: '1',
   apiUrlForReportServer: 'https://staging.api.reports.sidcoop.org',
@@ -23,7 +23,10 @@ export const environment = {
   apiUrlForPayroll: 'https://staging.api.payroll.sidcoop.org',
   apiVersionForPayroll: '1',
 
-  projectCodeForReportServer: 'SC'
+  projectCodeForReportServer: 'SC',
+
+  // Application code in the Identity token response that grants access to this app
+  applicationCode: 'HRIS'
 };
 
 /*

@@ -7,6 +7,39 @@
   }
 }
 
+// floats above everything near the bottom of the screen (below toastr's 999999)
+.idle-warning {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  background-color: #ff9f43;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  .idle-warning-count {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #ff9f43;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+}
+
 .approval-strip {
   .approval-strip-title {
     min-width: 150px;
