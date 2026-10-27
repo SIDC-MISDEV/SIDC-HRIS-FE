@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { MailService } from './api/mail.service';
 import { PayrollEmployeeDetailsService } from './api/payrollEmployeeDetails.service';
 import { PayrollEmployeeScheduleService } from './api/payrollEmployeeSchedule.service';
 import { PayrollPeriodService } from './api/payrollPeriod.service';
@@ -14,6 +15,7 @@ import { PayslipService } from './api/payslip.service';
   declarations: [],
   exports:      [],
   providers: [
+    MailService,
     PayrollEmployeeDetailsService,
     PayrollEmployeeScheduleService,
     PayrollPeriodService,

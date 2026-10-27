@@ -143,7 +143,18 @@ export class CoreMenuService {
       return;
     }
 
-    return this.getMenu(this._currentMenuKey);
+    return this.filterByModulePermission(this.getMenu(this._currentMenuKey));
+  }
+
+  /**
+   * Drop menu items whose moduleCode the user cannot view (token response applications)
+   *
+   * @param items
+   */
+  private filterByModulePermission(items: any[]): any[] {
+    return items
+      ?.filter(item => !item.moduleCode || this.authService.hasPermission(item.moduleCode))
+      .map(item => (item.children ? { ...item, children: this.filterByModulePermission(item.children) } : item));
   }
 
   /**

@@ -73,7 +73,7 @@ export class PayrollApprovalDetailsComponent implements OnInit, OnDestroy {
           {
             name: 'Payroll Summary',
             isLink: true,
-            link: '/application/attendance-payroll/payroll-approval',
+            link: '/application/attendance-payroll/payroll-summary-approval',
           },
           {
             name: 'Details',
@@ -147,6 +147,6 @@ export class PayrollApprovalDetailsComponent implements OnInit, OnDestroy {
   }
 
   back(): void {
-    this.router.navigate(['/application/attendance-payroll/payroll-approval']);
+    this.router.navigate(['/application/attendance-payroll/payroll-summary-approval']);
   }
 }

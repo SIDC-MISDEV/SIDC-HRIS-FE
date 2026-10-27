@@ -5,6 +5,8 @@ import { User } from '../models/user';
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { helpers } from 'chart.js';
 import { Router } from '@angular/router';
+import { environment } from 'environments/environment';
+import { AppModule, Permission, UserApplication } from '../models/app-access';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +73,38 @@ export class AuthService {
     this.user.applicant.tab = tab;
   }
 
+
+  /**
+   *  This app's entry in the token response `applications`
+   */
+  get currentApplication(): UserApplication | undefined {
+    return this.currentUserValue?.applications?.find(app => app.code === environment.applicationCode);
+  }
+
+  get hasApplicationAccess(): boolean {
+    return !!this.currentApplication;
+  }
+
+  /**
+   *  Confirms if the user has the permission on a module of this app
+   */
+  hasPermission(moduleCode: string, permission: string = Permission.View): boolean {
+    const module = this.findModule(this.currentApplication?.modules ?? [], moduleCode);
+    return !!module?.permissions?.includes(permission);
+  }
+
+  private findModule(modules: AppModule[], moduleCode: string): AppModule | undefined {
+    for (const module of modules) {
+      if (module.code === moduleCode) {
+        return module;
+      }
+      const child = this.findModule(module.children ?? [], moduleCode);
+      if (child) {
+        return child;
+      }
+    }
+    return undefined;
+  }
 
   get tokenDetails() {
     const helper = new JwtHelperService();

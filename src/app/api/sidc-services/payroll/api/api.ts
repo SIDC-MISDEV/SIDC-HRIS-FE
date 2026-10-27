@@ -1,3 +1,5 @@
+export * from './mail.service';
+import { MailService } from './mail.service';
 export * from './payrollEmployeeDetails.service';
 import { PayrollEmployeeDetailsService } from './payrollEmployeeDetails.service';
 export * from './payrollEmployeeSchedule.service';
@@ -8,4 +10,4 @@ export * from './payrollSummary.service';
 import { PayrollSummaryService } from './payrollSummary.service';
 export * from './payslip.service';
 import { PayslipService } from './payslip.service';
-export const APIS = [PayrollEmployeeDetailsService, PayrollEmployeeScheduleService, PayrollPeriodService, PayrollSummaryService, PayslipService];
+export const APIS = [MailService, PayrollEmployeeDetailsService, PayrollEmployeeScheduleService, PayrollPeriodService, PayrollSummaryService, PayslipService];

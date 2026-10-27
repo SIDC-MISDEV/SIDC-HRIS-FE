@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title }}</h5>
+  <button type="button" class="close" (click)="activeModal.dismiss()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <p>{{ message }}</p>
+  <form (ngSubmit)="onSubmit()">
+    <div class="position-relative">
+      <label for="enterPin" class="form-label">PIN</label>
+      <input
+        [type]="showPin ? 'text' : 'password'"
+        id="enterPin"
+        class="form-control"
+        [(ngModel)]="pin"
+        name="enterPin"
+        minlength="4"
+        maxlength="6"
+        autocomplete="off"
+        required
+        ngbAutofocus
+      />
+      <i
+        class="feather"
+        [ngClass]="showPin ? 'icon-eye-off' : 'icon-eye'"
+        style="position: absolute; right: 10px; top: 38px; cursor: pointer"
+        (click)="showPin = !showPin"
+      ></i>
+      <small *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</small>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" [disabled]="validating" (click)="onSubmit()">
+    {{ validating ? 'Verifying...' : confirmLabel }}
+  </button>
+</div>

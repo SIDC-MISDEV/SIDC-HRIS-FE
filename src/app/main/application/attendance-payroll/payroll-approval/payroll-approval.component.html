@@ -3,6 +3,35 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
     <section id="payroll-approval-page">
+      <!-- the PIN and this setting are shared with the payslip PIN -->
+      <div class="card p-1 mb-1">
+        <div class="d-flex align-items-center justify-content-between px-1 py-half">
+          <div>
+            <span class="d-block">Require PIN to view payroll summary</span>
+            <small class="text-muted">When off, payroll summaries open without asking for your PIN.</small>
+          </div>
+          <div class="custom-control custom-control-primary custom-switch">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="pinActiveToggle"
+              [checked]="pinActive"
+              [disabled]="pinToggleLoading"
+              (change)="onPinToggleChange($event.target.checked)"
+            />
+            <label class="custom-control-label" for="pinActiveToggle"></label>
+          </div>
+        </div>
+        <div
+          *ngIf="pinActive"
+          class="d-flex justify-content-end align-items-center px-1 pb-half"
+          style="border-top: 1px dashed #dcdcdc; padding-top: 0.5rem; gap: 1.5rem"
+        >
+          <a href="javascript:void(0)" (click)="openChangePinModal()" class="small text-primary">Change PIN</a>
+          <a href="javascript:void(0)" (click)="confirmResetPin()" class="small text-primary">Reset PIN?</a>
+        </div>
+      </div>
+
       <div class="d-flex mt-1 mb-1 justify-content-between">
         <div class="col-6 ml-1 align-items-center d-flex">
           <h4 style="margin: 0">Payroll Summary List</h4>
@@ -133,6 +162,9 @@
                   <a href="javascript:void(0);" ngbDropdownItem [disabled]="!isApproved(row)" (click)="exportATMEmployees(row)">
                     <span [data-feather]="'download'" [size]="16" [class]="'mr-50'"></span> Export ATM Employees (CSV)
                     <small *ngIf="!isApproved(row)" class="d-block text-muted ml-2">Available once approved</small>
+                  </a>
+                  <a *ngIf="isRejected(row)" href="javascript:void(0);" ngbDropdownItem (click)="viewRejectionReason(row)">
+                    <span [data-feather]="'message-square'" [size]="16" [class]="'mr-50'"></span> View Rejection Reason
                   </a>
                 </div>
               </div>

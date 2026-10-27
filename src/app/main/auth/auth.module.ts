@@ -15,7 +15,7 @@ import { SharedModule } from 'app/common/shared/shared.module';
 import { NgSelectModule } from '@ng-select/ng-select';
 //import { IdentityService } from 'app/api';
 import { BASE_PATH, IdentityService } from 'app/api/sidc-services/identity';
-import { BASE_PATH as BASE_PATH_LEGACY, IdentityService as IdentityLegacyService } from 'app/api/sidc-services/identity-legacy';
+// import { BASE_PATH as BASE_PATH_LEGACY, IdentityService as IdentityLegacyService } from 'app/api/sidc-services/identity-legacy';
 import { environment } from 'environments/environment';
 
 const routes: Routes = [
@@ -71,8 +71,8 @@ const routes: Routes = [
     
     IdentityService,
 
-    { provide: BASE_PATH_LEGACY, useValue: environment.apiUrlForIdentityLegacy },
-    IdentityLegacyService,
+    // { provide: BASE_PATH_LEGACY, useValue: environment.apiUrlForIdentityLegacy },
+    // IdentityLegacyService,
 
     DatePipe
   ],

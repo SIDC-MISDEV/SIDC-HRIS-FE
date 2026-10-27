@@ -1,17 +1,21 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TelerikReportViewerComponent } from '@progress/telerik-angular-report-viewer';
-import { PayrollSummaryService } from 'app/api/sidc-services/payroll';
+import { PayrollSummaryService, PayslipService } from 'app/api/sidc-services/payroll';
 import { ProjectReportTemplateService } from 'app/api/sidc-services/reportserver';
 import { AuthService } from 'app/common/services/auth.service';
+import { ModuleCode, Permission } from 'app/common/models/app-access';
 import { StringResources } from 'app/common/resources/stringResources';
 import { environment } from 'environments/environment';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { fromEvent, merge, Observable, Subject, timer } from 'rxjs';
+import { filter, map, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import { ChangePinModalComponent } from '../payroll-pin/change-pin-modal.component';
+import { EnterPinModalComponent } from '../payroll-pin/enter-pin-modal.component';
 
 export interface ReportDataCommand {
   id: number;
@@ -43,9 +47,15 @@ export interface PayrollApprover {
 })
 export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
   @ViewChild('viewer1', { static: false }) viewer: TelerikReportViewerComponent;
+  @ViewChild('idleWarningHost', { static: true }) idleWarningHost: ElementRef<HTMLElement>;
 
   // report-server module code the payroll summary .trdp is registered under
   private readonly projectModuleCode = 'payrollapproval';
+  // return to the payroll summary list after this long without user activity
+  private readonly idleTimeoutMs = 300000; // 5 minutes
+  // the warning is shown during the last few seconds of idleTimeoutMs
+  private readonly idleWarningSeconds = 5;
+  private readonly listUrl = '/application/attendance-payroll/payroll-summary-approval';
 
   public contentHeader: object;
   public reportData: ReportDataCommand;
@@ -60,6 +70,10 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
   // payroll_summary.Status, used to detect a final approval whose summary update failed
   public summaryStatus: string;
   public retryingSummaryStatus = false;
+  // seconds left before the idle redirect; null while the warning is hidden
+  public idleCountdown: number | null = null;
+  // the page stays empty until the PIN is accepted (or PIN protection is off)
+  public pinVerified = false;
   // undefined = all employees; true = ATM only; false = non-ATM only
   public isATM: boolean | undefined = undefined;
   public readonly atmFilterOptions: { label: string; value: boolean | undefined }[] = [
@@ -88,6 +102,10 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     private payrollSummaryService: PayrollSummaryService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
+    private router: Router,
+    private ngZone: NgZone,
+    private payslipService: PayslipService,
+    private modalService: NgbModal,
   ) {
     this.unsubscribeAll = new Subject();
   }
@@ -119,7 +137,7 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
           {
             name: 'Payroll Summary',
             isLink: true,
-            link: '/application/attendance-payroll/payroll-approval',
+            link: '/application/attendance-payroll/payroll-summary-approval',
           },
           {
             name: 'Preview',
@@ -129,13 +147,120 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
       },
     };
 
-    this.getApprovers();
-    this.getReport();
+    this.checkPinRequirement();
+    // a transformed or overflow-hidden ancestor would trap a fixed element, so host it on <body>
+    document.body.appendChild(this.idleWarningHost.nativeElement);
+    this.watchIdle();
   }
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.idleWarningHost.nativeElement.remove();
+    this.modalService.dismissAll();
+  }
+
+  // The payroll summary uses the employee's payslip PIN and its on/off setting. Nothing is
+  // loaded until the PIN is accepted; cancelling returns to the payroll summary list.
+  private checkPinRequirement(): void {
+    this.payslipService
+      .apiVversionPayrollPayslipGetEmployeePinIsRequiredGet(environment.apiVersionForPayroll)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
+        (response: any) => (response?.Data?.IsRequired === false ? this.unlock() : this.checkPinExpiry()),
+        // fail safe: ask for the PIN when the setting can't be confirmed
+        () => this.checkPinExpiry()
+      );
+  }
+
+  private checkPinExpiry(): void {
+    this.payslipService
+      .apiVversionPayrollPayslipGetEmployeePinExpiryGet(environment.apiVersionForPayroll)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
+        (response: any) => this.promptForPin(response?.Message === 'PIN expired'),
+        () => this.promptForPin(false)
+      );
+  }
+
+  private promptForPin(expired: boolean): void {
+    const modalRef = expired
+      ? this.modalService.open(ChangePinModalComponent, { backdrop: 'static', keyboard: false })
+      : this.modalService.open(EnterPinModalComponent, { backdrop: 'static', keyboard: false });
+    if (expired) {
+      modalRef.componentInstance.message = 'Your PIN has expired. Please change it to view the payroll summary.';
+    }
+    modalRef.result.then(
+      () => this.unlock(),
+      () => this.router.navigate([this.listUrl], { queryParams: { group: this.payrollGroup } })
+    );
+  }
+
+  private unlock(): void {
+    this.pinVerified = true;
+    this.getApprovers();
+    this.getReport();
+  }
+
+  // Any activity restarts the countdown and hides the warning. The warning shows for the
+  // last idleWarningSeconds; while the page is busy (report loading, a modal open, a decision
+  // being saved) the warning is held back and the countdown starts over once it's free.
+  private watchIdle(): void {
+    this.ngZone.runOutsideAngular(() => {
+      const activity$ = merge(
+        ...['mousemove', 'mousedown', 'keydown', 'wheel', 'touchstart'].map((name) => fromEvent(document, name)),
+        // capture so scrolling inside the report viewer counts too
+        fromEvent(document, 'scroll', { capture: true })
+      );
+
+      activity$
+        .pipe(
+          startWith(null),
+          switchMap(() => {
+            this.setIdleCountdown(null);
+            let remaining = this.idleWarningSeconds;
+            return timer(this.idleTimeoutMs - this.idleWarningSeconds * 1000, 1000).pipe(
+              map(() => {
+                if (this.isBusy()) {
+                  remaining = this.idleWarningSeconds;
+                  this.setIdleCountdown(null);
+                  return false;
+                }
+                if (remaining === 0) {
+                  return true;
+                }
+                this.setIdleCountdown(remaining--);
+                return false;
+              })
+            );
+          }),
+          filter((expired) => expired),
+          take(1),
+          takeUntil(this.unsubscribeAll)
+        )
+        .subscribe(() =>
+          this.ngZone.run(() => {
+            this.idleCountdown = null;
+            this.toastr.info('', 'Returned to the payroll summary list due to inactivity.', {
+              timeOut: 3000,
+              positionClass: 'toast-bottom-center',
+              toastClass: 'toast ngx-toastr',
+            });
+            this.router.navigate([this.listUrl], { queryParams: { group: this.payrollGroup } });
+          })
+        );
+    });
+  }
+
+  // re-enter the zone only when the value changes so mousemove doesn't trigger change detection
+  private setIdleCountdown(value: number | null): void {
+    if (this.idleCountdown !== value) {
+      this.ngZone.run(() => (this.idleCountdown = value));
+    }
+  }
+
+  private isBusy(): boolean {
+    return Swal.isVisible() || this.modalService.hasOpenModals() || this.actionInProgress || this.retryingSummaryStatus || this.blockUI.isActive;
   }
 
   getApprovers(): void {
@@ -159,7 +284,7 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
             ? [
                 {
                   step: 'notedBy',
-                  role: 'Noted by',
+                  role: 'Verified by',
                   employeeNumber: item.NotedByEmployeeNumber,
                   name: item.NotedByNameApprover,
                   position: item.NotedByPositionApprover,
@@ -196,9 +321,17 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Approve/reject/retry need `edit` on the Payroll Summary module (token response applications)
+  get canEdit(): boolean {
+    return this.authService.hasPermission(ModuleCode.PayrollSummary, Permission.Edit);
+  }
+
   // Buttons show only on the logged-in user's own step, while it is still pending,
   // and only after every earlier step has been approved.
   canAct(index: number): boolean {
+    if (!this.canEdit) {
+      return false;
+    }
     const approver = this.approvers[index];
     const employeeCode = this.authService.currentUserValue?.employeeCode;
     if (!approver || !employeeCode || approver.employeeNumber !== employeeCode) {
@@ -216,8 +349,18 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
       title: approving ? 'Approve payroll summary?' : 'Reject payroll summary?',
       text: approving
         ? 'This payroll summary will be marked as approved.'
-        : 'This payroll summary will be marked as rejected.',
+        : 'This payroll summary will be marked as rejected. Please state the reason.',
       icon: approving ? 'question' : 'warning',
+      // a reject must carry remarks; the modal stays open until some are entered
+      ...(approving
+        ? {}
+        : {
+            input: 'textarea' as const,
+            inputPlaceholder: 'Enter remarks...',
+            // matches the API's 500-character limit on remarks
+            inputAttributes: { 'aria-label': 'Remarks', maxlength: '500' },
+            inputValidator: (value: string) => (!value?.trim() ? 'Remarks are required to reject.' : null),
+          }),
       showCancelButton: true,
       confirmButtonText: approving ? 'Approve' : 'Reject',
       cancelButtonText: 'Cancel',
@@ -231,12 +374,17 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     if (!result.value) {
       return;
     }
+    const remarks = approving ? undefined : String(result.value).trim();
+    if (!approving && !remarks) {
+      return;
+    }
 
     const body = {
       database: this.payrollGroup,
       payrollId: this.payrollId,
       employeeNumber: approver.employeeNumber,
       status: decision,
+      remarks,
     };
     let request$: Observable<any> =
       approver.step === 'notedBy'
@@ -303,13 +451,6 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
       this.approvers.every((a) => a.status?.toUpperCase() === 'APPROVED') &&
       this.summaryStatus?.toUpperCase() !== 'APPROVED'
     );
-  }
-
-  // Only the final approver may re-send the summary status update.
-  get isFinalApprover(): boolean {
-    const employeeCode = this.authService.currentUserValue?.employeeCode;
-    const finalApprover = this.approvers[this.approvers.length - 1];
-    return !!employeeCode && finalApprover?.employeeNumber === employeeCode;
   }
 
   retrySummaryStatus(): void {
@@ -379,8 +520,8 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     const rs = {
       report: this.reportData.projectModuleId + '/' + this.reportData.fileName,
       parameters: {
-        // the report's data source calls the payroll API, which trusts the legacy Identity token
-        token: localStorage.getItem('legacyToken') ?? localStorage.getItem('token'),
+        // the report's data source calls the payroll API with this token
+        token: localStorage.getItem('token'),
         hostServer: environment.apiUrlForPayroll,
         payrollId: this.payrollId,
         database: this.payrollGroup,
