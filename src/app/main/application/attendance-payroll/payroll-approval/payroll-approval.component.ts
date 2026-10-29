@@ -222,6 +222,8 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
         (response) => {
           // API returns PascalCase; map rows to the camelCase props used by the table columns
           this.rows = (response.Data ?? []).map((item: any) => ({
+            // a rejected payroll is regenerated under the same PayrollId, so Id tells the summaries apart
+            payrollSummaryId: item.Id,
             payrollId: item.PayrollId,
             payPeriod: item.PayrollPeriod,
             grossPay: item.TotalGrossPay,
@@ -260,7 +262,7 @@ export class PayrollApprovalComponent implements OnInit, OnDestroy {
   viewRejectionReason(row: any): void {
     this.blockUI.start();
     this.payrollSummaryService
-      .apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(environment.apiVersionForPayroll, this.payrollGroup, row.payrollId, 1, 1)
+      .apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(environment.apiVersionForPayroll, this.payrollGroup, row.payrollSummaryId, 1, 1)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(
         (response) => {

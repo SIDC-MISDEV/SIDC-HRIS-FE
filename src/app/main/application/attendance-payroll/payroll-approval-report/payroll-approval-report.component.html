@@ -51,11 +51,12 @@
             </ng-container>
           </div>
 
-          <!-- final approval saved but payroll summary status not updated -->
+          <!-- final approval or a rejection saved but payroll summary status not updated -->
           <div *ngIf="isSummaryOutOfSync" class="alert alert-warning w-100 mt-1 mb-0" role="alert">
             <div class="alert-body d-flex align-items-center justify-content-between flex-wrap">
               <span>
-                Final approval was saved, but the payroll summary status wasn't updated. Please retry.
+                {{ expectedSummaryStatus === 'REJECTED' ? 'The rejection' : 'Final approval' }} was saved, but the payroll
+                summary status wasn't updated. Please retry.
               </span>
               <button *ngIf="canEdit" type="button" class="btn btn-sm btn-warning" [disabled]="retryingSummaryStatus"
                 (click)="retrySummaryStatus()">
