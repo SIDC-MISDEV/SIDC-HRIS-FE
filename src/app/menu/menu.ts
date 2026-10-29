@@ -1,4 +1,5 @@
 import { CoreMenu } from '@core/types'
+import { ModuleCode } from 'app/common/models/app-access'
 
 export const menu: CoreMenu[] = [
   {
@@ -15,6 +16,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'bar-chart-2',
+    moduleCode: ModuleCode.Dashboard,
     url: 'application/dashboard-overview'
   },
   {
@@ -23,6 +25,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'users',
+    moduleCode: ModuleCode.Employees,
     url: 'admin/employee'
   },
   {
@@ -31,6 +34,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'git-branch',
+    moduleCode: ModuleCode.Organization,
     url: 'application/organization'
   },
   {
@@ -39,6 +43,7 @@ export const menu: CoreMenu[] = [
     type: 'collapsible',
     role: ['ForIncubation'],
     icon: 'calendar',
+    moduleCode: ModuleCode.AttendanceAndPayroll,
     children: [
       {
         id: 'payroll-approval-group',
@@ -46,6 +51,7 @@ export const menu: CoreMenu[] = [
         type: 'collapsible',
         role: ['ForIncubation'],
         icon: 'check-square',
+        moduleCode: ModuleCode.PayrollApproval,
         children: [
           {
             id: 'payroll-approval',
@@ -53,7 +59,8 @@ export const menu: CoreMenu[] = [
             type: 'item',
             role: ['ForIncubation'],
             icon: 'circle',
-            url: 'application/attendance-payroll/payroll-approval'
+            moduleCode: ModuleCode.PayrollSummary,
+            url: 'application/attendance-payroll/payroll-summary-approval'
           },
           {
             id: 'payroll-allocation-approval',
@@ -61,6 +68,7 @@ export const menu: CoreMenu[] = [
             type: 'item',
             role: ['ForIncubation'],
             icon: 'circle',
+            moduleCode: ModuleCode.PayrollAllocation,
             url: 'application/attendance-payroll/payroll-allocation-approval'
           }
         ]
@@ -73,6 +81,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'trending-up',
+    moduleCode: ModuleCode.PerformanceManagement,
     url: 'application/performance-management'
   },
   {
@@ -81,6 +90,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'book-open',
+    moduleCode: ModuleCode.LearningManagement,
     url: 'application/learning-management'
   },
   {
@@ -89,6 +99,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'file-text',
+    moduleCode: ModuleCode.HrPolicies,
     url: 'application/hr-policies'
   },
   {
@@ -97,6 +108,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'pie-chart',
+    moduleCode: ModuleCode.Reports,
     url: 'application/report'
   },
   {
@@ -105,6 +117,7 @@ export const menu: CoreMenu[] = [
     type: 'item',
     role: ['ForIncubation'],
     icon: 'archive',
+    moduleCode: ModuleCode.Archives,
     url: 'application/archives'
   },
 ]

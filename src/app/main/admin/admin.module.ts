@@ -4,6 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreCommonModule } from '@core/common.module';
+import { ModuleGuard } from 'app/common/guards/module.guard';
+import { ModuleCode } from 'app/common/models/app-access';
 
 
 const routes: Routes = [
@@ -13,6 +15,8 @@ const routes: Routes = [
   },
   {
     path: 'employee',
+    canActivate: [ModuleGuard],
+    data: { moduleCode: ModuleCode.Employees },
     loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule)
   }
 ];

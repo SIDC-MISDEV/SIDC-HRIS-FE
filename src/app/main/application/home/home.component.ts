@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ModuleCode } from 'app/common/models/app-access';
+import { AuthService } from 'app/common/services/auth.service';
 
 interface QuickAccessLink {
   title: string;
   icon: string;
   url: string;
+  moduleCode: ModuleCode;
 }
 
 interface HomeCard {
@@ -21,14 +24,14 @@ interface HomeCard {
 export class HomeComponent implements OnInit {
 
   public quickAccessLinks: QuickAccessLink[] = [
-    { title: 'Dashboard', icon: 'bar-chart-2', url: '/application/dashboard-overview' },
-    { title: 'Employees', icon: 'users', url: '/admin/employee' },
-    { title: 'Organization', icon: 'git-branch', url: '/application/organization' },
-    { title: 'Attendance and Payroll', icon: 'calendar', url: '/application/attendance-payroll' },
-    { title: 'Performance Management', icon: 'trending-up', url: '/application/performance-management' },
-    { title: 'Learning Management', icon: 'book-open', url: '/application/learning-management' },
-    { title: 'HR Policies', icon: 'file-text', url: '/application/hr-policies' },
-    { title: 'Reports', icon: 'pie-chart', url: '/application/report' },
+    { title: 'Dashboard', icon: 'bar-chart-2', url: '/application/dashboard-overview', moduleCode: ModuleCode.Dashboard },
+    { title: 'Employees', icon: 'users', url: '/admin/employee', moduleCode: ModuleCode.Employees },
+    { title: 'Organization', icon: 'git-branch', url: '/application/organization', moduleCode: ModuleCode.Organization },
+    { title: 'Attendance and Payroll', icon: 'calendar', url: '/application/attendance-payroll', moduleCode: ModuleCode.AttendanceAndPayroll },
+    { title: 'Performance Management', icon: 'trending-up', url: '/application/performance-management', moduleCode: ModuleCode.PerformanceManagement },
+    { title: 'Learning Management', icon: 'book-open', url: '/application/learning-management', moduleCode: ModuleCode.LearningManagement },
+    { title: 'HR Policies', icon: 'file-text', url: '/application/hr-policies', moduleCode: ModuleCode.HrPolicies },
+    { title: 'Reports', icon: 'pie-chart', url: '/application/report', moduleCode: ModuleCode.Reports },
   ];
 
   public cards: HomeCard[] = [
@@ -52,9 +55,11 @@ export class HomeComponent implements OnInit {
     },
   ];
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    // only the modules the user can view (token response applications), same as the sidebar
+    this.quickAccessLinks = this.quickAccessLinks.filter(link => this.authService.hasPermission(link.moduleCode));
   }
 
 }

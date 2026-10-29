@@ -1,5 +1,6 @@
 import { StringMapWithRename } from "@angular/compiler/src/compiler_facade_interface";
 import { Role } from "./role";
+import { UserApplication } from "./app-access";
 
 export class User {
   id?: string;
@@ -16,4 +17,6 @@ export class User {
   profilePicture?: string;
   branch?: string;
   warehouse?: string;
+  mustChangePassword?: boolean;
+  applications?: UserApplication[];
 }

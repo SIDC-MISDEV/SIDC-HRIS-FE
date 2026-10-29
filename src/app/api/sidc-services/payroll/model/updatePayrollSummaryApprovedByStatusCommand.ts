@@ -12,7 +12,8 @@
 
 export interface UpdatePayrollSummaryApprovedByStatusCommand { 
     database?: string;
-    payrollId?: string;
+    payrollSummaryId?: string;
     employeeNumber?: string;
     status?: string;
+    remarks?: string;
 }

@@ -2,7 +2,8 @@
   <div class="content-body">
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <section id="payroll-approval-report-page">
+    <!-- rendered only after the PIN check, so no payroll data is requested before it -->
+    <section *ngIf="pinVerified" id="payroll-approval-report-page">
       <!-- Approval status strip (payroll summary approver API) -->
       <div class="card approval-strip">
         <div class="card-body d-flex align-items-center flex-wrap">
@@ -50,16 +51,14 @@
             </ng-container>
           </div>
 
-          <!-- final approval saved but payroll summary status not updated -->
+          <!-- final approval or a rejection saved but payroll summary status not updated -->
           <div *ngIf="isSummaryOutOfSync" class="alert alert-warning w-100 mt-1 mb-0" role="alert">
             <div class="alert-body d-flex align-items-center justify-content-between flex-wrap">
-              <span *ngIf="isFinalApprover">
-                Final approval was saved, but the payroll summary status wasn't updated. Please retry.
+              <span>
+                {{ expectedSummaryStatus === 'REJECTED' ? 'The rejection' : 'Final approval' }} was saved, but the payroll
+                summary status wasn't updated. Please retry.
               </span>
-              <span *ngIf="!isFinalApprover">
-                Final approval was saved, but the payroll summary status wasn't updated. Please inform the final approver.
-              </span>
-              <button *ngIf="isFinalApprover" type="button" class="btn btn-sm btn-warning" [disabled]="retryingSummaryStatus"
+              <button *ngIf="canEdit" type="button" class="btn btn-sm btn-warning" [disabled]="retryingSummaryStatus"
                 (click)="retrySummaryStatus()">
                 Retry
               </button>
@@ -116,5 +115,19 @@
         </div>
       </div>
     </section>
+
+    <!-- idle warning; any mouse, keyboard, scroll or touch activity dismisses it.
+         The host is moved to <body> so no page container can clip or cover it. -->
+    <div #idleWarningHost>
+      <div *ngIf="idleCountdown !== null" class="idle-warning" role="alert" aria-live="assertive">
+        <div class="idle-warning-count">{{ idleCountdown }}</div>
+        <div>
+          <div class="font-weight-bolder">
+            Returning to the payroll summary list in {{ idleCountdown }} second{{ idleCountdown === 1 ? '' : 's' }}.
+          </div>
+          <small>Move the mouse or press any key to stay.</small>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

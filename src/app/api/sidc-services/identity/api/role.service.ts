@@ -203,4 +203,65 @@ export class RoleService {
         );
     }
 
+    /**
+     * Get users by role and branch
+     * 
+     * @param branchCode 
+     * @param role 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getUsersByRoleAndBranch(branchCode: string, role: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getUsersByRoleAndBranch(branchCode: string, role: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getUsersByRoleAndBranch(branchCode: string, role: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getUsersByRoleAndBranch(branchCode: string, role: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (branchCode === null || branchCode === undefined) {
+            throw new Error('Required parameter branchCode was null or undefined when calling getUsersByRoleAndBranch.');
+        }
+
+        if (role === null || role === undefined) {
+            throw new Error('Required parameter role was null or undefined when calling getUsersByRoleAndBranch.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (branchCode !== undefined && branchCode !== null) {
+            queryParameters = queryParameters.set('BranchCode', <any>branchCode);
+        }
+        if (role !== undefined && role !== null) {
+            queryParameters = queryParameters.set('Role', <any>role);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('get',`${this.basePath}/api/role/get-users-by-role-and-branch`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
 }

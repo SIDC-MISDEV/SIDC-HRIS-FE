@@ -1,0 +1,92 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title }}</h5>
+  <button type="button" class="close" (click)="activeModal.dismiss()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <p *ngIf="message">{{ message }}</p>
+  <form (ngSubmit)="onSave()">
+    <div class="mb-1 position-relative">
+      <label for="oldPin" class="form-label">Old PIN</label>
+      <input
+        [type]="showOldPin ? 'text' : 'password'"
+        id="oldPin"
+        class="form-control"
+        [(ngModel)]="oldPin"
+        name="oldPin"
+        minlength="4"
+        maxlength="6"
+        autocomplete="off"
+        required
+        ngbAutofocus
+        (blur)="validateOldPin()"
+        (input)="oldPinValid = false; checkPinMatch()"
+      />
+      <i
+        class="feather"
+        [ngClass]="showOldPin ? 'icon-eye-off' : 'icon-eye'"
+        style="position: absolute; right: 10px; top: 38px; cursor: pointer"
+        (click)="showOldPin = !showOldPin"
+      ></i>
+      <small *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</small>
+    </div>
+
+    <div class="mb-1 position-relative">
+      <label for="newPin" class="form-label">New PIN</label>
+      <input
+        [type]="showNewPin ? 'text' : 'password'"
+        id="newPin"
+        class="form-control"
+        [(ngModel)]="newPin"
+        name="newPin"
+        minlength="4"
+        maxlength="6"
+        autocomplete="off"
+        required
+        (input)="checkPinMatch()"
+        (blur)="checkPinMatch()"
+      />
+      <i
+        class="feather"
+        [ngClass]="showNewPin ? 'icon-eye-off' : 'icon-eye'"
+        style="position: absolute; right: 10px; top: 38px; cursor: pointer"
+        (click)="showNewPin = !showNewPin"
+      ></i>
+      <small *ngIf="sameAsOld" class="text-danger d-block">New and Old PIN must be different.</small>
+      <small *ngIf="pinTooShort" class="text-danger">PIN must be 6 characters.</small>
+    </div>
+
+    <div class="position-relative">
+      <label for="confirmPin" class="form-label">Confirm New PIN</label>
+      <input
+        [type]="showConfirmPin ? 'text' : 'password'"
+        id="confirmPin"
+        class="form-control"
+        [(ngModel)]="confirmPin"
+        name="confirmPin"
+        minlength="4"
+        maxlength="6"
+        autocomplete="off"
+        required
+        (input)="checkPinMatch()"
+        (blur)="checkPinMatch()"
+      />
+      <i
+        class="feather"
+        [ngClass]="showConfirmPin ? 'icon-eye-off' : 'icon-eye'"
+        style="position: absolute; right: 10px; top: 38px; cursor: pointer"
+        (click)="showConfirmPin = !showConfirmPin"
+      ></i>
+      <small *ngIf="pinMismatch" class="text-danger">New PIN and Confirm PIN do not match.</small>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary" [disabled]="!isFormValid || saving" (click)="onSave()">
+    {{ saving ? 'Updating...' : 'Change PIN' }}
+  </button>
+</div>

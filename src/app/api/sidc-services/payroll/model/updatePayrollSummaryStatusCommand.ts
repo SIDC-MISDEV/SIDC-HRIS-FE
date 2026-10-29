@@ -12,6 +12,6 @@
 
 export interface UpdatePayrollSummaryStatusCommand { 
     database?: string;
-    payrollId?: string;
+    id?: number;
     status?: string;
 }

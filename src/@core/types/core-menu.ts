@@ -5,6 +5,7 @@ export interface CoreMenuItem {
     url?         : string;
     type         : 'section' | 'collapsible' | 'item';
     role?        : Array<string>;
+    moduleCode?  : string; // shown only with 'view' on this module (token response applications)
     translate?   : string;
     icon?        : string;
     disabled?    : boolean;
