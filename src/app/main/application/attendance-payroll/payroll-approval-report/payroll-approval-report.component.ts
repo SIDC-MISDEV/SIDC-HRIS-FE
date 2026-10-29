@@ -60,6 +60,8 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
   public contentHeader: object;
   public reportData: ReportDataCommand;
   public reportSource = {};
+  // identifies this summary; payrollId is shared by a rejected summary and its regenerated one
+  public payrollSummaryId: string;
   public payrollId: string;
   public payrollGroup: string;
   public serviceUrl = `${environment.apiUrlForReportServer}/api/Reports/`;
@@ -111,8 +113,9 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.payrollId = this.activatedRoute.snapshot.paramMap.get('id');
-    // database the payroll belongs to, passed from the list page (defaults to Rank and File)
+    this.payrollSummaryId = this.activatedRoute.snapshot.paramMap.get('id');
+    // payrollId (for the report) and the database the payroll belongs to are passed from the list page
+    this.payrollId = this.activatedRoute.snapshot.queryParamMap.get('payrollId');
     this.payrollGroup = this.activatedRoute.snapshot.queryParamMap.get('group') ?? 'sofos2_payroll';
 
     this.contentHeader = {
@@ -271,7 +274,7 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
       .apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(
         environment.apiVersionForPayroll,
         this.payrollGroup,
-        this.payrollId,
+        this.payrollSummaryId,
         1,
         1
       )
@@ -381,7 +384,7 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
 
     const body = {
       database: this.payrollGroup,
-      payrollId: this.payrollId,
+      payrollSummaryId: this.payrollSummaryId,
       employeeNumber: approver.employeeNumber,
       status: decision,
       remarks,
@@ -391,17 +394,9 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
         ? this.payrollSummaryService.apiVversionPayrollPayrollSummaryUpdateNotedByStatusPut(environment.apiVersionForPayroll, body)
         : this.payrollSummaryService.apiVversionPayrollPayrollSummaryUpdateApprovedByStatusPut(environment.apiVersionForPayroll, body);
 
-    // Approved by is the final step: once it approves, mark the payroll summary itself as approved
-    if (approver.step === 'approvedBy' && approving) {
-      request$ = request$.pipe(
-        switchMap(() =>
-          this.payrollSummaryService.apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(environment.apiVersionForPayroll, {
-            database: this.payrollGroup,
-            payrollId: this.payrollId,
-            status: 'APPROVED',
-          })
-        )
-      );
+    // A reject at any step, or the final (Approved by) approval, also sets the payroll summary status
+    if (!approving || approver.step === 'approvedBy') {
+      request$ = request$.pipe(switchMap(() => this.updateSummaryStatus(decision)));
     }
 
     this.actionInProgress = true;
@@ -424,14 +419,14 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     );
   }
 
-  // There is no get-by-id endpoint, so read the group's summaries and pick this payroll.
+  // There is no get-by-id endpoint, so read the group's summaries and pick this one by its Id.
   getSummaryStatus(): void {
     this.payrollSummaryService
       .apiVversionPayrollPayrollSummaryGetPayrollSummaryGet(environment.apiVersionForPayroll, this.payrollGroup, 1, 9999)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(
         (response) => {
-          const summary = (response.Data ?? []).find((item: any) => item.PayrollId === this.payrollId);
+          const summary = (response.Data ?? []).find((item: any) => String(item.Id) === this.payrollSummaryId);
           this.summaryStatus = summary?.Status;
         },
         () => {
@@ -441,31 +436,51 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
       );
   }
 
-  // Every approver approved, but the payroll summary itself was not marked approved
+  // The payroll summary status the approvers' decisions call for: REJECTED once any approver
+  // rejects, APPROVED once every approver approves, otherwise none yet.
+  get expectedSummaryStatus(): ApprovalDecision | null {
+    if (this.approvers.some((a) => a.status?.toUpperCase() === 'REJECTED')) {
+      return 'REJECTED';
+    }
+    if (this.approvers.length > 0 && this.approvers.every((a) => a.status?.toUpperCase() === 'APPROVED')) {
+      return 'APPROVED';
+    }
+    return null;
+  }
+
+  // An approver's decision was saved, but the payroll summary status was not updated to match
   // (the follow-up update-payroll-summary-status call failed).
   get isSummaryOutOfSync(): boolean {
     return (
       !this.approversLoading &&
-      this.approvers.length > 0 &&
       this.summaryStatus !== undefined &&
-      this.approvers.every((a) => a.status?.toUpperCase() === 'APPROVED') &&
-      this.summaryStatus?.toUpperCase() !== 'APPROVED'
+      this.expectedSummaryStatus !== null &&
+      this.summaryStatus?.toUpperCase() !== this.expectedSummaryStatus
     );
   }
 
+  // Updates this summary only (by its Id), not every summary sharing the same payrollId
+  private updateSummaryStatus(status: ApprovalDecision): Observable<any> {
+    return this.payrollSummaryService.apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(environment.apiVersionForPayroll, {
+      database: this.payrollGroup,
+      // route params are strings; the command's Id is numeric
+      id: Number(this.payrollSummaryId),
+      status,
+    });
+  }
+
   retrySummaryStatus(): void {
+    const status = this.expectedSummaryStatus;
+    if (!status) {
+      return;
+    }
     this.retryingSummaryStatus = true;
-    this.payrollSummaryService
-      .apiVversionPayrollPayrollSummaryUpdatePayrollSummaryStatusPut(environment.apiVersionForPayroll, {
-        database: this.payrollGroup,
-        payrollId: this.payrollId,
-        status: 'APPROVED',
-      })
+    this.updateSummaryStatus(status)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(
         () => {
           this.retryingSummaryStatus = false;
-          this.toastr.success('', 'Payroll summary approved.', {
+          this.toastr.success('', status === 'APPROVED' ? 'Payroll summary approved.' : 'Payroll summary rejected.', {
             timeOut: 3000,
             positionClass: 'toast-bottom-center',
             toastClass: 'toast ngx-toastr',

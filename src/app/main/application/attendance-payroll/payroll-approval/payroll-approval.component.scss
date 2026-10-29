@@ -37,6 +37,19 @@
   width: auto !important;
 }
 
+// Flex columns shrink to fit the screen, so on small screens keep the table at a minimum
+// width (columns keep their flexGrow ratios) and let the card scroll sideways.
+.payroll-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 991.98px) {
+  .payroll-table-scroll .ngx-datatable {
+    min-width: 900px;
+  }
+}
+
 .datatable-body-cell-label {
   white-space: nowrap;
   text-overflow: ellipsis;
