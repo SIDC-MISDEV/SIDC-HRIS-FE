@@ -1,5 +1,5 @@
 /**
- * SIDC PAYROLL API SERVER
+ * SIDC SAP API SERVER
  * Our Endpoints are powered by .Net Core, Onion Architecture, CQRS with MediatR Library,Entity Framework Core - Code First,Repository Pattern - Generic, Swagger UI, API Versioning,Fluent Validation and Automapper.
  *
  * OpenAPI spec version: v1
@@ -120,16 +120,16 @@ export class PayrollSummaryService {
      * 
      * @param version 
      * @param database 
-     * @param payrollId 
+     * @param payrollSummaryId 
      * @param pageNumber 
      * @param pageSize 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollId?: string, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet(version: string, database?: string, payrollSummaryId?: string, pageNumber?: number, pageSize?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (version === null || version === undefined) {
             throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollSummaryGetPayrollSummaryApproverGet.');
@@ -143,8 +143,8 @@ export class PayrollSummaryService {
         if (database !== undefined && database !== null) {
             queryParameters = queryParameters.set('database', <any>database);
         }
-        if (payrollId !== undefined && payrollId !== null) {
-            queryParameters = queryParameters.set('payrollId', <any>payrollId);
+        if (payrollSummaryId !== undefined && payrollSummaryId !== null) {
+            queryParameters = queryParameters.set('payrollSummaryId', <any>payrollSummaryId);
         }
         if (pageNumber !== undefined && pageNumber !== null) {
             queryParameters = queryParameters.set('pageNumber', <any>pageNumber);

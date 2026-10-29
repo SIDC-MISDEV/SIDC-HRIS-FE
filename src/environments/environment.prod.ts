@@ -3,7 +3,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'https://api.supplychain.sidc.coop',
   apiVersion: '1',
-  apiUrlForIdentity: 'https://api.identity.sidc.coop',
+  apiUrlForIdentity: 'https://api-identity-ten.sidc.coop',
   apiVersionForIdentity: '1',
   // apiUrlForIdentityLegacy: 'https://api.identity.sidc.coop',
   // apiVersionForIdentityLegacy: '1',

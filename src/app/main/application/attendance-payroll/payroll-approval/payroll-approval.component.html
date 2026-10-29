@@ -54,7 +54,8 @@
       </div>
 
       
-      <div class="card">
+      <!-- scrolls horizontally on small screens; see .payroll-table-scroll -->
+      <div class="card payroll-table-scroll">
         <ngx-datatable
           #table
           class="bootstrap core-bootstrap"
@@ -153,8 +154,8 @@
                   <!-- real link so the browser shows the target URL on hover -->
                   <a
                     ngbDropdownItem
-                    [routerLink]="[row.payrollId, 'report']"
-                    [queryParams]="{ group: payrollGroup }"
+                    [routerLink]="[row.payrollSummaryId, 'report']"
+                    [queryParams]="{ group: payrollGroup, payrollId: row.payrollId }"
                   >
                     <span [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> View
                   </a>

@@ -1,5 +1,5 @@
 /**
- * SIDC PAYROLL API SERVER
+ * SIDC SAP API SERVER
  * Our Endpoints are powered by .Net Core, Onion Architecture, CQRS with MediatR Library,Entity Framework Core - Code First,Repository Pattern - Generic, Swagger UI, API Versioning,Fluent Validation and Automapper.
  *
  * OpenAPI spec version: v1
@@ -12,6 +12,6 @@
 
 export interface UpdatePayrollSummaryStatusCommand { 
     database?: string;
-    payrollId?: string;
+    id?: number;
     status?: string;
 }
