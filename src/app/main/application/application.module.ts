@@ -25,16 +25,6 @@ const routes: Routes = [
     data: { title: "Dashboard", moduleCode: ModuleCode.Dashboard },
   },
   {
-    path: "dashboard",
-    loadChildren: () =>
-      import("./dashboard/dashboard.module").then((m) => m.DashboardModule),
-  },
-  {
-    path: "inventory",
-    loadChildren: () =>
-      import("./inventory/inventory.module").then((m) => m.InventoryModule),
-  },
-  {
     path: "report",
     canActivate: [ModuleGuard],
     data: { moduleCode: ModuleCode.Reports },
