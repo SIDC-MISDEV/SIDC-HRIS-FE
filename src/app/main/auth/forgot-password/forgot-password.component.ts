@@ -4,7 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CoreConfigService } from '@core/services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IdentityService } from 'app/api/sidc-services/identity';
+// import { IdentityService } from 'app/api/sidc-services/identity';
+import { IdentityService } from 'app/api/sidc-services/identity-legacy';
 //import { IdentityService } from 'app/api';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ToastrService } from 'ngx-toastr';
@@ -85,7 +86,7 @@ export class ForgotPasswordComponent implements OnInit {
     const { username } = this.forgotPasswordForm.getRawValue();
     const isEmailAddress = username.indexOf("@") > 0 ? true: false;
 
-    this.identityService.forgotPassword({email: username, isEmailAddress}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
+    this.identityService.apiIdentityForgotPasswordPost({email: username, isEmailAddress}).pipe(takeUntil(this.unsubscribeAll)).subscribe(response => {
       this.blockUI.stop();
       const device = isEmailAddress ? 'email' : 'phone';
       this.toastr.success('', "OTP was sent to your " + device + '.', {

@@ -1,0 +1,59 @@
+.settings-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .settings-card {
+    border-radius: 0.5rem;
+  
+    .card-header {
+      border-bottom: 1px solid rgba(34, 41, 47, 0.08);
+      padding: 1.25rem 1.5rem;
+    }
+  }
+  
+  .settings-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+  
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(34, 41, 47, 0.08);
+    }
+  
+    .settings-item-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 0.5rem;
+      flex-shrink: 0;
+  
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  
+    .settings-item-text {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+  
+  // Stack the button under the text on small screens
+  @media (max-width: 575.98px) {
+    .settings-item {
+      flex-wrap: wrap;
+  
+      .settings-item-text {
+        flex-basis: calc(100% - 60px);
+      }
+  
+      .btn {
+        width: 100%;
+      }
+    }
+  }

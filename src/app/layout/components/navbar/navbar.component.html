@@ -70,6 +70,13 @@
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
         <!-- <a ngbDropdownItem [routerLink]="['/account']"><span [data-feather]="'user'" [class]="'mr-50'"></span> Account</a
         > -->
+        <!-- <a ngbDropdownItem [routerLink]="['/admin/users/change-password']">
+          <span [data-feather]="'lock'" [class]="'mr-50'"></span> Change Password
+        </a> -->
+
+        <a ngbDropdownItem [routerLink]="['/settings']">
+          <span [data-feather]="'settings'" [class]="'mr-50'"></span> Settings
+        </a>
         <div class="dropdown-divider"></div>
         <a ngbDropdownItem (click)="logout()"
           ><span [data-feather]="'power'" [class]="'mr-50'"></span> Logout</a
