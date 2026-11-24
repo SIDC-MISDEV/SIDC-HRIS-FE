@@ -1,0 +1,13 @@
+export * from './disciplinaryActions.service';
+import { DisciplinaryActionsService } from './disciplinaryActions.service';
+export * from './employeeDisciplinaryCases.service';
+import { EmployeeDisciplinaryCasesService } from './employeeDisciplinaryCases.service';
+export * from './employeePerformanceEvaluations.service';
+import { EmployeePerformanceEvaluationsService } from './employeePerformanceEvaluations.service';
+export * from './employeeTrainingParticipants.service';
+import { EmployeeTrainingParticipantsService } from './employeeTrainingParticipants.service';
+export * from './performanceEvaluationItems.service';
+import { PerformanceEvaluationItemsService } from './performanceEvaluationItems.service';
+export * from './trainingCourses.service';
+import { TrainingCoursesService } from './trainingCourses.service';
+export const APIS = [DisciplinaryActionsService, EmployeeDisciplinaryCasesService, EmployeePerformanceEvaluationsService, EmployeeTrainingParticipantsService, PerformanceEvaluationItemsService, TrainingCoursesService];

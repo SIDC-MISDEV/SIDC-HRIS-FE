@@ -5,8 +5,9 @@
 export const environment = {
   production: false,
   hmr: false,
-  apiUrl: 'https://localhost:44377',
+  // apiUrl: 'https://localhost:44377',
   apiVersion: '1',
+  apiUrl: 'http://localhost:5000',
   apiUrlForIdentity: 'https://staging.api.identity.ten.sidcoop.org',
   apiVersionForIdentity: '1',
   // Previous Identity host, kept alongside the .NET 10 one above

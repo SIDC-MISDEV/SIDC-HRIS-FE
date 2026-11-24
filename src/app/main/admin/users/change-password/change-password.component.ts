@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChangePasswordCommand, ChangePasswordService } from 'app/api/sidc-services/identity-legacy';
+import { ChangePasswordCommand, ChangePasswordService } from 'app/api/sidc-services/identity';
 import { AuthService } from 'app/common/services/auth.service';
 import { MustMatchValidator } from 'app/common/ui/validators/mustmatch.validator';
 import { PasswordValidator } from 'app/common/ui/validators/password.validator';
@@ -151,7 +151,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.blockUI.start();
 
     this.changePasswordService
-      .apiChangepasswordChangePasswordPost(this.changePasswordCommand)
+      .changePassword(this.changePasswordCommand)
       .pipe(
         takeUntil(this.unsubscribeAll),
         finalize(() => {

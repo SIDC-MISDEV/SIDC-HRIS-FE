@@ -11,6 +11,15 @@ export const menu: CoreMenu[] = [
     url: 'application/home'
   },
   {
+    id: 'employees-information',
+    title: 'Employees Information',
+    type: 'item',
+    role: ['ItemVerifierAdmin'],
+    icon: 'user',
+    moduleCode: ModuleCode.Employees,
+    url: 'admin/employee-information'
+  },
+  {
     id: 'dashboard',
     title: 'Dashboard',
     type: 'item',

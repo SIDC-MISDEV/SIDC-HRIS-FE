@@ -1,0 +1,729 @@
+<!-- =========================================================
+     REUSABLE: table toolbar (Expand / Download / Print)
+     ========================================================= -->
+     <ng-template #toolbar let-key="key">
+      <div class="tbl-menu">
+        <button
+          type="button"
+          class="menu-btn"
+          aria-label="Table options"
+          [attr.aria-expanded]="openMenu === key"
+          (click)="toggleMenu(key, $event)"
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <g fill="currentColor">
+              <circle cx="4" cy="6" r="1.5" /><rect x="8" y="5" width="13" height="2" />
+              <circle cx="4" cy="12" r="1.5" /><rect x="8" y="11" width="13" height="2" />
+              <circle cx="4" cy="18" r="1.5" /><rect x="8" y="17" width="13" height="2" />
+            </g>
+          </svg>
+        </button>
+    
+        <ul class="menu-list" *ngIf="openMenu === key" (click)="$event.stopPropagation()">
+          <li>
+            <button type="button" (click)="expand(key)">
+              {{ expandedKey === key ? "Collapse" : "Expand" }}
+            </button>
+          </li>
+          <li><button type="button" (click)="download(key)">Download</button></li>
+          <li><button type="button" (click)="print(key)">Print</button></li>
+        </ul>
+      </div>
+    </ng-template>
+    
+    <div class="overview-page">
+      <!-- =========================================================
+           LEFT COLUMN
+           ========================================================= -->
+      <aside class="left-col">
+        <!-- Profile card -->
+        <div class="card profile-card">
+          <div class="avatar-wrap">
+            <img class="avatar" [src]="photoSrc" alt="Employee photo" />
+            <button type="button" class="edit-btn avatar-edit" aria-label="Edit photo">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+          <h2 class="emp-name">{{ fullName }}</h2>
+          <p class="emp-no">Employee No.: {{ employee?.employeeNumber }}</p>
+          <span class="badge" [ngClass]="employee?.isActive ? 'badge-active' : 'badge-separated'">
+            {{ employee?.isActive ? "Active" : "Separated" }}
+          </span>
+          <span class="badge badge-member" *ngIf="employee?.memberCode">Member</span>
+        </div>
+    
+        <!-- Side navigation (clickable) -->
+        <nav class="card side-nav">
+          <button
+            type="button"
+            class="nav-item"
+            *ngFor="let item of navItems"
+            [class.active]="activeTab === item.key"
+            (click)="selectTab(item)"
+          >
+            <i class="nav-icon" [ngClass]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </button>
+        </nav>
+      </aside>
+    
+      <!-- Loading / error -->
+      <p class="state-msg" *ngIf="loading">Loading employee record…</p>
+      <p class="state-msg error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    
+      <!-- =========================================================
+           1. OVERVIEW
+           ========================================================= -->
+      <section class="right-col" *ngIf="activeTab === 'overview' && employee">
+        <div class="cards-row">
+          <!-- Job Summary -->
+          <div class="card job-summary">
+            <h3 class="card-title">Job Summary</h3>
+    
+            <div class="info-grid two-col">
+              <div class="info-item">
+                <span class="label">Employment Status</span>
+                <span class="value">{{ employmentStatusLabel || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date Hired</span>
+                <span class="value">{{ employee.dateHired | date : "MMM d, yyyy" }}</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Job Title</span>
+                <span class="value">{{ currentAssignment?.positionName || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Start Date of Agency Employment</span>
+                <span class="value">{{
+                  (employee.startDateAgencyEmployment | date : "MMM d, yyyy") || "-"
+                }}</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Department/Branch</span>
+                <span class="value">{{ currentAssignment?.departmentName || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Start Date of Probationary Employment</span>
+                <span class="value">{{
+                  (employee.startDateProbationaryEmployment | date : "MMM d, yyyy") || "-"
+                }}</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Region/Division</span>
+                <span class="value">{{ currentAssignment?.branchName || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Start Date of Regular Employment</span>
+                <span class="value">{{
+                  (employee.startDateRegularEmployment | date : "MMM d, yyyy") || "-"
+                }}</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Strategic Group</span>
+                <span class="value">{{ currentAssignment?.strategicGroupName || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Tenure from Probationary Employment</span>
+                <span class="value">{{ probationaryTenure }} years</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Immediate Superior</span>
+                <span class="value">-</span>
+                <!-- not in API response -->
+              </div>
+              <div class="info-item">
+                <span class="label">Tenure from Regular Employment</span>
+                <span class="value">{{ regularTenure }} years</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Work Address</span>
+                <span class="value">{{ workAddress || "-" }}</span>
+              </div>
+            </div>
+    
+            <button type="button" class="edit-btn card-edit" aria-label="Edit job summary" (click)="openEdit('job')">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+    
+          <!-- Rank and Compensation -->
+          <div class="card rank-comp">
+            <h3 class="card-title">Rank and Compensation</h3>
+    
+            <div class="info-grid one-col">
+              <div class="info-item">
+                <span class="label">Job Level</span>
+                <span class="value">Placeholder</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Basic Salary</span>
+                <span class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Promotional Allowance</span>
+                <span class="value">-</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Incentive Allowance</span>
+                <span class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Hazard Pay</span>
+                <span class="value">0.00</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Region Governing Wage Rate</span>
+                <span class="value">Placeholder</span>
+              </div>
+            </div>
+    
+            <button type="button" class="edit-btn card-edit" aria-label="Edit compensation">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+        </div>
+    
+        <!-- Quick action cards (clickable) -->
+        <div class="action-row">
+          <button type="button" class="action-card" (click)="openJobDescription()">
+            <span class="action-icon"><i class="icon-job-description"></i></span>
+            <span class="action-text">Job Description</span>
+          </button>
+    
+          <button type="button" class="action-card" (click)="openKpi()">
+            <span class="action-icon"><i class="icon-kpi"></i></span>
+            <span class="action-text">Key Performance Indicators</span>
+          </button>
+    
+          <button type="button" class="action-card" (click)="openCompetency()">
+            <span class="action-icon"><i class="icon-competency"></i></span>
+            <span class="action-text">Competency Development</span>
+          </button>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           2. PERSONAL INFORMATION
+           ========================================================= -->
+      <section class="right-col personal-section" *ngIf="activeTab === 'personal' && employee">
+        <div class="personal-row">
+          <!-- Personal Details -->
+          <div class="card">
+            <h3 class="card-title">Personal Details</h3>
+            <div class="info-grid two-col">
+              <div class="info-item">
+                <span class="label">Sex</span>
+                <span class="value">{{ genderLabel(employee.gender) || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Birthday</span>
+                <span class="value">{{ employee.dateOfBirth | date : "MMMM d, yyyy" }}</span>
+              </div>
+    
+              <div class="info-item">
+                <span class="label">Civil Status</span>
+                <span class="value">{{ civilStatusLabel(employee.civilStatus) || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Age</span>
+                <span class="value">{{ age || "-" }}</span>
+              </div>
+    
+              <div class="info-item full">
+                <span class="label">Birthplace</span>
+                <span class="value">{{ employee.birthplace || "-" }}</span>
+              </div>
+              <div class="info-item full">
+                <span class="label">Mother's Maiden Name</span>
+                <span class="value">{{ employee.mothersMaidenName || "-" }}</span>
+              </div>
+              <div class="info-item full">
+                <span class="label">Number of Qualified Dependents</span>
+                <span class="value">{{ qualifiedDependents }}</span>
+              </div>
+              <div class="info-item full">
+                <span class="label">Religious Affiliation</span>
+                <span class="value">-</span>
+                <!-- not in API response -->
+              </div>
+              <div class="info-item full">
+                <span class="label">Nationality</span>
+                <span class="value">{{ employee.nationality || "-" }}</span>
+              </div>
+            </div>
+            <button type="button" class="edit-btn card-edit" aria-label="Edit personal details" (click)="openEdit('personal')">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+    
+          <!-- Address and Contact Details -->
+          <div class="card">
+            <h3 class="card-title">Address and Contact Details</h3>
+            <div class="info-grid one-col">
+              <div class="info-item">
+                <span class="label">Present Address</span>
+                <span class="value">{{ presentAddress || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Permanent Address</span>
+                <span class="value">{{ permanentAddress || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Contact No. 1</span>
+                <span class="value">{{ employee.contactNumberOne || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Contact No. 2</span>
+                <span class="value">{{ employee.contactNumberTwo || "-" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">E-mail Address</span>
+                <span class="value">{{ employee.email || "-" }}</span>
+              </div>
+            </div>
+            <button type="button" class="edit-btn card-edit" aria-label="Edit address and contact" (click)="openEdit('contact')">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+    
+          <!-- Emergency Contact Details -->
+          <div class="card">
+            <h3 class="card-title">Emergency Contact Details</h3>
+            <div class="info-grid one-col">
+              <!-- Emergency contact fields are not in the API response yet -->
+              <div class="info-item">
+                <span class="label">Emergency Contact Person</span>
+                <span class="value">-</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Relationship to Emergency Contact Person</span>
+                <span class="value">-</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Phone Number of Contact Person</span>
+                <span class="value">-</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Address of Emergency Contact Person</span>
+                <span class="value">-</span>
+              </div>
+            </div>
+            <button type="button" class="edit-btn card-edit" aria-label="Edit emergency contact">
+              <i class="icon-edit"></i>
+            </button>
+          </div>
+        </div>
+    
+        <!-- Government Membership Information -->
+        <div class="card">
+          <h3 class="card-title">Government Membership Information</h3>
+          <div class="gov-grid">
+            <div class="info-item">
+              <span class="label">Social Security</span>
+              <span class="value">{{ employee.governmentIds?.sssNumber || "-" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Pag-Ibig Fund</span>
+              <span class="value">{{ employee.governmentIds?.pagIbigNumber || "-" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Philhealth</span>
+              <span class="value">{{ employee.governmentIds?.philHealthNumber || "-" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Tin (BIR) Number</span>
+              <span class="value">{{ employee.governmentIds?.tinNumber || "-" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Health Card Number</span>
+              <span class="value">{{ employee.governmentIds?.healthCardNumber || "-" }}</span>
+            </div>
+          </div>
+          <button type="button" class="edit-btn card-edit" aria-label="Edit government membership" (click)="openEdit('government')">
+            <i class="icon-edit"></i>
+          </button>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           3. EDUCATIONAL BACKGROUND
+           ========================================================= -->
+      <section class="right-col" *ngIf="activeTab === 'education' && employee">
+        <div class="card data-card">
+          <h3 class="card-title centered">Educational Background</h3>
+    
+          <div class="scroll-area">
+            <table class="data-table fixed">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Name of Institution</th>
+                  <th>Address</th>
+                  <th>Year Attended</th>
+                  <th>Course / Program</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of educationTable">
+                  <td class="strong">{{ row.level }}</td>
+                  <td>{{ row.school }}</td>
+                  <td>{{ row.address }}</td>
+                  <td>{{ row.years }}</td>
+                  <td>{{ row.course }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           4. MOVEMENT HISTORY
+           ========================================================= -->
+      <section class="right-col" *ngIf="activeTab === 'movement' && employee">
+        <div class="card data-card" [class.expanded]="expandedKey === 'movement'">
+          <ng-container *ngTemplateOutlet="toolbar; context: { key: 'movement' }"></ng-container>
+          <h3 class="card-title centered">Employee Movement (Personnel Action) History</h3>
+    
+          <div class="scroll-area">
+            <table class="data-table wide" id="tbl-movement">
+              <thead>
+                <tr>
+                  <th rowspan="2">Description</th>
+                  <th rowspan="2">Start Date</th>
+                  <th colspan="2" class="group">Position</th>
+                  <th colspan="2" class="group">Division</th>
+                  <th colspan="2" class="group">Department</th>
+                </tr>
+                <tr>
+                  <th class="sub">From</th>
+                  <th class="sub">To</th>
+                  <th class="sub">From</th>
+                  <th class="sub">To</th>
+                  <th class="sub">From</th>
+                  <th class="sub">To</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of movementRows">
+                  <td>{{ r.description }}</td>
+                  <td>{{ r.startDate | date : "dd-MMM-yyyy" }}</td>
+                  <td>{{ r.positionFrom }}</td>
+                  <td>{{ r.positionTo }}</td>
+                  <td>{{ r.divisionFrom }}</td>
+                  <td>{{ r.divisionTo }}</td>
+                  <td>{{ r.departmentFrom }}</td>
+                  <td>{{ r.departmentTo }}</td>
+                </tr>
+                <tr *ngIf="!movementRows.length">
+                  <td colspan="8">No movement records found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           5. TRAINING RECORDS
+           ========================================================= -->
+      <section class="right-col" *ngIf="activeTab === 'training' && employee">
+        <div class="card data-card" [class.expanded]="expandedKey === 'training'">
+          <ng-container *ngTemplateOutlet="toolbar; context: { key: 'training' }"></ng-container>
+          <h3 class="card-title centered">Learning and Development Activities Attended</h3>
+    
+          <div class="scroll-area">
+            <table class="data-table" id="tbl-training">
+              <thead>
+                <tr>
+                  <th>Title of Training</th>
+                  <th>Date</th>
+                  <th>Venue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of trainingRows">
+                  <td>{{ t.title }}</td>
+                  <td>{{ t.date | date : "MMMM dd, yyyy" }}</td>
+                  <td>{{ t.venue }}</td>
+                </tr>
+                <tr *ngIf="!trainingRows.length">
+                  <td colspan="3">No training records found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           6. PERFORMANCE RECORDS
+           ========================================================= -->
+      <section class="right-col performance-section" *ngIf="activeTab === 'performance' && employee">
+        <!-- Summary of Performance Evaluation (PDF cards) -->
+        <div class="card data-card">
+          <h3 class="card-title centered">Summary of Performance Evaluation</h3>
+    
+          <div class="pdf-row">
+            <button
+              type="button"
+              class="pdf-card"
+              *ngFor="let ev of evaluations"
+              [disabled]="!ev.pdfUrl"
+              [attr.title]="ev.pdfUrl ? 'Open PDF' : 'PDF not available'"
+              (click)="openEvaluation(ev)"
+            >
+              <span class="pdf-badge">PDF</span>
+              <span class="pdf-text">Performance<br />Evaluation<br />Year {{ ev.year }}</span>
+            </button>
+            <p class="empty-note" *ngIf="!evaluations.length">No evaluations found.</p>
+          </div>
+        </div>
+    
+        <!-- Performance Rating History (line chart) -->
+        <div class="card data-card">
+          <h3 class="card-title centered">Performance Rating History</h3>
+    
+          <div class="chart-wrap" *ngIf="chart.points.length; else noRatings">
+            <svg class="rating-chart" viewBox="0 0 760 320" role="img" aria-label="Performance rating history">
+              <!-- grid + y axis labels -->
+              <g *ngFor="let t of chart.ticks">
+                <line class="grid" [attr.x1]="chart.left" [attr.x2]="chart.right" [attr.y1]="t.y" [attr.y2]="t.y" />
+                <text class="tick" text-anchor="end" [attr.x]="chart.left - 10" [attr.y]="t.y + 4">{{ t.label }}</text>
+              </g>
+    
+              <!-- line -->
+              <polyline class="line" [attr.points]="chart.polyline" />
+    
+              <!-- points, values and x labels -->
+              <g *ngFor="let p of chart.points">
+                <circle class="dot" r="3.5" [attr.cx]="p.x" [attr.cy]="p.y" />
+                <text class="val" text-anchor="middle" [attr.x]="p.x" [attr.y]="p.y - 10">{{ p.rating }}</text>
+                <text class="xlabel" text-anchor="middle" [attr.x]="p.x" [attr.y]="chart.bottom + 22">
+                  <tspan
+                    *ngFor="let l of p.lines; let i = index"
+                    [attr.x]="p.x"
+                    [attr.dy]="i === 0 ? 0 : 13"
+                  >{{ l }}</tspan>
+                </text>
+              </g>
+            </svg>
+          </div>
+          <ng-template #noRatings><p class="empty-note">No ratings found.</p></ng-template>
+        </div>
+      </section>
+    
+      <!-- =========================================================
+           7. DISCIPLINARY RECORDS
+           ========================================================= -->
+      <section class="right-col" *ngIf="activeTab === 'disciplinary' && employee">
+        <div class="card data-card" [class.expanded]="expandedKey === 'disciplinary'">
+          <ng-container *ngTemplateOutlet="toolbar; context: { key: 'disciplinary' }"></ng-container>
+          <h3 class="card-title centered">Summary of Disciplinary Action Received</h3>
+    
+          <div class="scroll-area">
+            <table class="data-table" id="tbl-disciplinary">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Policy Violated</th>
+                  <th>Brief Description</th>
+                  <th>Sanction</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let d of disciplinaryRows">
+                  <td>{{ d.date | date : "d-MMM-yyyy" }}</td>
+                  <td>{{ d.policy }}</td>
+                  <td>{{ d.description }}</td>
+                  <td>{{ d.sanction }}</td>
+                </tr>
+                <tr *ngIf="!disciplinaryRows.length">
+                  <td colspan="4">No disciplinary records found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <!-- =========================================================
+           EDIT MODAL (one modal, content switches by section)
+           ========================================================= -->
+      <div class="emp-modal-backdrop" *ngIf="editSection" (click)="closeEdit()">
+        <form
+          class="emp-modal"
+          #f="ngForm"
+          (ngSubmit)="saveEdit()"
+          (click)="$event.stopPropagation()"
+          role="dialog"
+          aria-modal="true"
+          [attr.aria-label]="editTitle"
+        >
+          <header class="emp-modal__head">
+            <h3>{{ editTitle }}</h3>
+            <button type="button" class="emp-modal__close" aria-label="Close" (click)="closeEdit()">&times;</button>
+          </header>
+    
+          <div class="emp-modal__body" [ngSwitch]="editSection">
+    
+            <!-- Personal Details -->
+            <div class="emp-form-grid two" *ngSwitchCase="'personal'">
+              <label class="emp-field">
+                <span>Sex</span>
+                <select name="gender" [(ngModel)]="editForm.gender" required>
+                  <option [ngValue]="null" disabled>Select…</option>
+                  <option *ngFor="let o of genderOptions" [ngValue]="o.value">{{ o.label }}</option>
+                </select>
+              </label>
+              <label class="emp-field">
+                <span>Birthday</span>
+                <input type="date" name="dateOfBirth" [(ngModel)]="editForm.dateOfBirth" required />
+              </label>
+              <label class="emp-field">
+                <span>Civil Status</span>
+                <select name="civilStatus" [(ngModel)]="editForm.civilStatus" required>
+                  <option [ngValue]="null" disabled>Select…</option>
+                  <option *ngFor="let o of civilStatusOptions" [ngValue]="o.value">{{ o.label }}</option>
+                </select>
+              </label>
+              <label class="emp-field">
+                <span>Nationality</span>
+                <input type="text" name="nationality" [(ngModel)]="editForm.nationality" />
+              </label>
+              <label class="emp-field full">
+                <span>Birthplace</span>
+                <input type="text" name="birthplace" [(ngModel)]="editForm.birthplace" />
+              </label>
+              <label class="emp-field full">
+                <span>Mother's Maiden Name</span>
+                <input type="text" name="mothersMaidenName" [(ngModel)]="editForm.mothersMaidenName" />
+              </label>
+              <p class="emp-form-hint">Age is calculated automatically from the birthday.</p>
+            </div>
+    
+            <!-- Address and Contact Details -->
+            <div class="emp-form-grid two" *ngSwitchCase="'contact'">
+              <label class="emp-field">
+                <span>Contact No. 1</span>
+                <input type="tel" name="contactNumberOne" [(ngModel)]="editForm.contactNumberOne" required />
+              </label>
+              <label class="emp-field">
+                <span>Contact No. 2</span>
+                <input type="tel" name="contactNumberTwo" [(ngModel)]="editForm.contactNumberTwo" />
+              </label>
+              <label class="emp-field full">
+                <span>E-mail Address</span>
+                <input type="email" name="email" [(ngModel)]="editForm.email" email />
+              </label>
+    
+              <h4 class="emp-form-section-title">Present Address</h4>
+              <label class="emp-field full">
+                <span>Street</span>
+                <input type="text" name="pa_street" [(ngModel)]="editForm.presentAddress.street" />
+              </label>
+              <label class="emp-field">
+                <span>Barangay</span>
+                <input type="text" name="pa_barangay" [(ngModel)]="editForm.presentAddress.barangay" />
+              </label>
+              <label class="emp-field">
+                <span>City</span>
+                <input type="text" name="pa_city" [(ngModel)]="editForm.presentAddress.city" />
+              </label>
+              <label class="emp-field">
+                <span>Province</span>
+                <input type="text" name="pa_province" [(ngModel)]="editForm.presentAddress.province" />
+              </label>
+              <label class="emp-field">
+                <span>Zip Code</span>
+                <input type="text" name="pa_zip" [(ngModel)]="editForm.presentAddress.zipCode" />
+              </label>
+    
+              <h4 class="emp-form-section-title">Permanent Address</h4>
+              <label class="emp-field full">
+                <span>Street</span>
+                <input type="text" name="pm_street" [(ngModel)]="editForm.permanentAddress.street" />
+              </label>
+              <label class="emp-field">
+                <span>Barangay</span>
+                <input type="text" name="pm_barangay" [(ngModel)]="editForm.permanentAddress.barangay" />
+              </label>
+              <label class="emp-field">
+                <span>City</span>
+                <input type="text" name="pm_city" [(ngModel)]="editForm.permanentAddress.city" />
+              </label>
+              <label class="emp-field">
+                <span>Province</span>
+                <input type="text" name="pm_province" [(ngModel)]="editForm.permanentAddress.province" />
+              </label>
+              <label class="emp-field">
+                <span>Zip Code</span>
+                <input type="text" name="pm_zip" [(ngModel)]="editForm.permanentAddress.zipCode" />
+              </label>
+            </div>
+    
+            <!-- Government Membership Information -->
+            <div class="emp-form-grid two" *ngSwitchCase="'government'">
+              <label class="emp-field">
+                <span>Social Security</span>
+                <input type="text" name="sssNumber" [(ngModel)]="editForm.sssNumber" />
+              </label>
+              <label class="emp-field">
+                <span>Pag-Ibig Fund</span>
+                <input type="text" name="pagIbigNumber" [(ngModel)]="editForm.pagIbigNumber" />
+              </label>
+              <label class="emp-field">
+                <span>Philhealth</span>
+                <input type="text" name="philHealthNumber" [(ngModel)]="editForm.philHealthNumber" />
+              </label>
+              <label class="emp-field">
+                <span>Tin (BIR) Number</span>
+                <input type="text" name="tinNumber" [(ngModel)]="editForm.tinNumber" />
+              </label>
+              <label class="emp-field">
+                <span>Health Card Number</span>
+                <input type="text" name="healthCardNumber" [(ngModel)]="editForm.healthCardNumber" />
+              </label>
+            </div>
+    
+            <!-- Job Summary (dates only) -->
+            <div class="emp-form-grid two" *ngSwitchCase="'job'">
+              <label class="emp-field">
+                <span>Date Hired</span>
+                <input type="date" name="dateHired" [(ngModel)]="editForm.dateHired" required />
+              </label>
+              <label class="emp-field">
+                <span>Start Date of Agency Employment</span>
+                <input type="date" name="startAgency" [(ngModel)]="editForm.startDateAgencyEmployment" />
+              </label>
+              <label class="emp-field">
+                <span>Start Date of Probationary Employment</span>
+                <input type="date" name="startProbationary" [(ngModel)]="editForm.startDateProbationaryEmployment" />
+              </label>
+              <label class="emp-field">
+                <span>Start Date of Regular Employment</span>
+                <input type="date" name="startRegular" [(ngModel)]="editForm.startDateRegularEmployment" />
+              </label>
+              <p class="emp-form-hint">
+                Position, department and other assignment details change through movement records, not here.
+                Tenure is calculated automatically.
+              </p>
+            </div>
+          </div>
+    
+          <footer class="emp-modal__foot">
+            <span class="emp-form-error" *ngIf="saveError">{{ saveError }}</span>
+            <button type="button" class="emp-btn emp-btn--secondary" (click)="closeEdit()" [disabled]="saving">Cancel</button>
+            <button type="submit" class="emp-btn emp-btn--primary" [disabled]="f.invalid || saving">
+              {{ saving ? "Saving…" : "Save changes" }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>

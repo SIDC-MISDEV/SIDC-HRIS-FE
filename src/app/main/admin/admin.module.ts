@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreCommonModule } from '@core/common.module';
 import { ModuleGuard } from 'app/common/guards/module.guard';
 import { ModuleCode } from 'app/common/models/app-access';
+import { EmployeesInformationComponent } from './users/employees-information/employees-information.component';
 
 
 const routes: Routes = [
@@ -18,11 +19,15 @@ const routes: Routes = [
     canActivate: [ModuleGuard],
     data: { moduleCode: ModuleCode.Employees },
     loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule)
+  },
+  {
+    path: 'employee-information',
+    component: EmployeesInformationComponent
   }
 ];
 
 @NgModule({
-  declarations: [],
+  declarations: [EmployeesInformationComponent],
   imports: [RouterModule.forChild(routes), ContentHeaderModule, TranslateModule, CoreCommonModule],
 
 })

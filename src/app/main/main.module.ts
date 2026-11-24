@@ -12,8 +12,10 @@ import { environment } from 'environments/environment';
 import { ApiModule as ApiModuleForReportGenerator,
   BASE_PATH as BASE_PATH_DW_REPORTGENERATOR } from 'app/api/sidc-services/report-generator';
 import { IdentityService, BASE_PATH as IDENTITY_BASE_PATH } from 'app/api/sidc-services/identity';
-import {ChangePasswordService, BASE_PATH as IDENTITY_LEGACY_BASE_PATH} from 'app/api/sidc-services/identity-legacy';
+import {ChangePasswordService, BASE_PATH as IDENTITY_LEGACY_BASE_PATH} from 'app/api/sidc-services/identity';
 import { SettingsComponent } from './settings/settings.component';
+import { EmployeesInformationComponent } from './admin/users/employees-information/employees-information.component';
+import { EmployeeRecordsComponent } from './admin/users/employees-information/employee-records/employee-records.component';
 
 
 const routes: Routes = [
@@ -39,6 +41,13 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent
+  },
+  // {
+  //   path: 'employees-information/:id/employee-records',
+  //   component : EmployeeRecordsComponent
+  // }
+  { path: 'employees-information/:employeeNumber/employee-records', 
+    component: EmployeeRecordsComponent 
   }
 ];
 
@@ -59,7 +68,6 @@ const routes: Routes = [
     { provide: BASE_PATH_REPORT_SERVER, useValue: environment.apiUrlForReportServer },
     { provide: BASE_PATH_DW_REPORTGENERATOR, useValue: environment.apiUrlForReportGenerator },
     { provide: IDENTITY_BASE_PATH, useValue: environment.apiUrlForIdentity},
-    { provide: IDENTITY_LEGACY_BASE_PATH, useValue: environment.apiUrlForIdentityLegacy }, 
     IdentityService,
     GoodsIssuanceService,
     ChangePasswordService,

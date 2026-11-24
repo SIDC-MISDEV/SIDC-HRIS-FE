@@ -32,6 +32,8 @@ export class HomeComponent implements OnInit {
     { title: 'Learning Management', icon: 'book-open', url: '/application/learning-management', moduleCode: ModuleCode.LearningManagement },
     { title: 'HR Policies', icon: 'file-text', url: '/application/hr-policies', moduleCode: ModuleCode.HrPolicies },
     { title: 'Reports', icon: 'pie-chart', url: '/application/report', moduleCode: ModuleCode.Reports },
+    { title: 'Employees Information', icon: 'users', url: '/admin/employee-information', moduleCode: ModuleCode.Employees },
+    { title: 'Overview', icon: 'users', url: '/admin/employee-information/overview', moduleCode: ModuleCode.Employees },
   ];
 
   public cards: HomeCard[] = [
@@ -61,5 +63,12 @@ export class HomeComponent implements OnInit {
     // only the modules the user can view (token response applications), same as the sidebar
     this.quickAccessLinks = this.quickAccessLinks.filter(link => this.authService.hasPermission(link.moduleCode));
   }
+
+  // ngOnInit(): void {
+  //   this.quickAccessLinks.forEach(link =>
+  //     console.log(link.title, link.moduleCode, this.authService.hasPermission(link.moduleCode))
+  //   );
+  //   this.quickAccessLinks = this.quickAccessLinks.filter(link => this.authService.hasPermission(link.moduleCode));
+  // }
 
 }

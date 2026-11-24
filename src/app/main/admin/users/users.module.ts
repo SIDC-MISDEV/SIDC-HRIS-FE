@@ -6,6 +6,8 @@ import { ContentHeaderModule } from 'app/layout/components/content-header/conten
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreCommonModule } from '@core/common.module';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { EmployeesInformationComponent } from './employees-information/employees-information.component';
+import { EmployeeRecordsComponent } from './employees-information/employee-records/employee-records.component';
 
 
 const routes: Routes = [
@@ -16,13 +18,18 @@ const routes: Routes = [
   {
     path: 'change-password',
     component: ChangePasswordComponent
-  }
+  },
+  {
+    path: 'employees-information',
+    component: EmployeesInformationComponent
+  },
 ];
 
 @NgModule({
   declarations: [
     UsersComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    EmployeeRecordsComponent,
   ],
   imports: [RouterModule.forChild(routes), ContentHeaderModule, TranslateModule, CoreCommonModule],
 })

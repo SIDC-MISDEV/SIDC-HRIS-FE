@@ -27,6 +27,9 @@ import { ApiInterceptor } from './common/interceptor/api-interceptor';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { CountriesService } from './common/services/countries.service';
 
+import { BASE_PATH as EMPLOYEES_INFORMATION_PATH, EmployeesService } from './api/sidc-hris-services/employees-information-api';
+import { BASE_PATH as EMPLOYEES_DEVELOPMENT_RECORDS_PATH, DisciplinaryActionsService, EmployeeDisciplinaryCasesService, EmployeePerformanceEvaluationsService, EmployeeTrainingParticipantsService } from './api/sidc-hris-services/employee-development-records-api';
+
 const appRoutes: Routes = [
   {
     path: '',
@@ -82,9 +85,16 @@ const appRoutes: Routes = [
   providers: [ 
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
     { provide: BASE_PATH, useValue: environment.apiUrlForDWInventory },
+    { provide: EMPLOYEES_INFORMATION_PATH, useValue: environment.apiUrl},
+    { provide: EMPLOYEES_DEVELOPMENT_RECORDS_PATH, useValue: environment.apiUrl },
     AuthService,
     //ProjectReportTemplateService,
-    CountriesService
+    CountriesService,
+    EmployeesService,
+    EmployeeTrainingParticipantsService,         
+    EmployeePerformanceEvaluationsService,       
+    EmployeeDisciplinaryCasesService,             
+    DisciplinaryActionsService, 
   ],
   bootstrap: [AppComponent]
 })

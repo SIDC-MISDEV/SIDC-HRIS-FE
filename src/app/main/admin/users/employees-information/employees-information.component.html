@@ -1,0 +1,81 @@
+<div class="page">
+  <!-- Search bar -->
+  <div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+      <circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.5" />
+      <line x1="15" y1="15" x2="21" y2="21" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    </svg>
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search employees"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearch()"
+      (keyup.enter)="onSearch()"
+    />
+    <span class="search-arrow">&#9658;</span>
+    <span class="search-value">{{ searchTerm }}</span>
+  </div>
+
+  <p class="result-count" *ngIf="!loading && !errorMessage">
+    Search Results: {{ filteredEmployees.length }} records found
+  </p>
+  <p class="result-count error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <!-- Results card -->
+  <div class="results-card">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Service<br />Status</th>
+          <th>Employee<br />Number</th>
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Position</th>
+          <th>Type of Business /<br />Department</th>
+          <th>Region /<br />Division</th>
+          <th>Work Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+        *ngFor="let e of filteredEmployees; trackBy: trackById"
+        class="clickable-row"
+        tabindex="0"
+        (click)="openEmployee(e)"
+        (keyup.enter)="openEmployee(e)">
+        <td [ngClass]="e.serviceStatus === 'Active' ? 'active' : 'separated'">
+          {{ e.serviceStatus }}
+        </td>
+        <td>{{ e.employeeNumber }}</td>
+        <td>
+          <span *ngIf="e.serviceStatus === 'Active' && e.link; else plainName" class="name-link">
+            {{ e.name }}
+          </span>
+          <ng-template #plainName>{{ e.name }}</ng-template>
+        </td>
+        <td>{{ e.status }}</td>
+        <td>{{ e.position }}</td>
+        <td>{{ e.department }}</td>
+        <td>{{ e.region }}</td>
+        <td>{{ e.address }}</td>
+      </tr>
+
+        <!-- Empty state -->
+        <tr *ngIf="!loading && !errorMessage && filteredEmployees.length === 0">
+          <td colspan="8">No employees found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Loading spinner overlay -->
+    <div class="spinner" *ngIf="loading" aria-label="Loading">
+      <span
+        *ngFor="let i of spinnerBars"
+        class="bar"
+        [style.transform]="'rotate(' + i * 30 + 'deg)'"
+        [style.opacity]="(i + 1) / 12"
+      ></span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+export * from './branches.service';
+import { BranchesService } from './branches.service';
+export * from './departments.service';
+import { DepartmentsService } from './departments.service';
+export * from './divisions.service';
+import { DivisionsService } from './divisions.service';
+export * from './positions.service';
+import { PositionsService } from './positions.service';
+export * from './regions.service';
+import { RegionsService } from './regions.service';
+export * from './strategicGroups.service';
+import { StrategicGroupsService } from './strategicGroups.service';
+export const APIS = [BranchesService, DepartmentsService, DivisionsService, PositionsService, RegionsService, StrategicGroupsService];

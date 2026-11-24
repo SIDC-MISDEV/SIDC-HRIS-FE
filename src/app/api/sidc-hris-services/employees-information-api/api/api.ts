@@ -1,0 +1,13 @@
+export * from './employeeAddresses.service';
+import { EmployeeAddressesService } from './employeeAddresses.service';
+export * from './employeeAssignments.service';
+import { EmployeeAssignmentsService } from './employeeAssignments.service';
+export * from './employeeDependents.service';
+import { EmployeeDependentsService } from './employeeDependents.service';
+export * from './employeeEducations.service';
+import { EmployeeEducationsService } from './employeeEducations.service';
+export * from './employeeGovernmentIds.service';
+import { EmployeeGovernmentIdsService } from './employeeGovernmentIds.service';
+export * from './employees.service';
+import { EmployeesService } from './employees.service';
+export const APIS = [EmployeeAddressesService, EmployeeAssignmentsService, EmployeeDependentsService, EmployeeEducationsService, EmployeeGovernmentIdsService, EmployeesService];

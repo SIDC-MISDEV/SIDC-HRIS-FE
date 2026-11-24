@@ -25,7 +25,7 @@ export enum ModuleCode {
   LearningManagement = 'LEARNING_MANAGEMENT',
   HrPolicies = 'HR_POLICIES',
   Reports = 'REPORTS',
-  Archives = 'ARCHIVES'
+  Archives = 'ARCHIVES',
 }
 
 export enum Permission {
