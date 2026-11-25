@@ -152,4 +152,62 @@ export class PayrollEmployeeDetailsService {
         );
     }
 
+    /**
+     * 
+     * 
+     * @param version 
+     * @param database 
+     * @param employeeNumber 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet(version: string, database?: string, employeeNumber?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet(version: string, database?: string, employeeNumber?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet(version: string, database?: string, employeeNumber?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet(version: string, database?: string, employeeNumber?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (version === null || version === undefined) {
+            throw new Error('Required parameter version was null or undefined when calling apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet.');
+        }
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (database !== undefined && database !== null) {
+            queryParameters = queryParameters.set('database', <any>database);
+        }
+        if (employeeNumber !== undefined && employeeNumber !== null) {
+            queryParameters = queryParameters.set('employeeNumber', <any>employeeNumber);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('get',`${this.basePath}/api/v${encodeURIComponent(String(version))}/payroll/PayrollEmployeeDetails/get-employee-email`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
 }

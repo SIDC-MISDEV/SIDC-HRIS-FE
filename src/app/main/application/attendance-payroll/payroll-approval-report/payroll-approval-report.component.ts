@@ -3,7 +3,7 @@ import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@an
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TelerikReportViewerComponent } from '@progress/telerik-angular-report-viewer';
-import { PayrollSummaryService, PayslipService } from 'app/api/sidc-services/payroll';
+import { MailService, PayrollEmployeeDetailsService, PayrollSummaryService, PayslipService } from 'app/api/sidc-services/payroll';
 import { ProjectReportTemplateService } from 'app/api/sidc-services/reportserver';
 import { AuthService } from 'app/common/services/auth.service';
 import { ModuleCode, Permission } from 'app/common/models/app-access';
@@ -71,6 +71,8 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
   public actionInProgress = false;
   // payroll_summary.Status, used to detect a final approval whose summary update failed
   public summaryStatus: string;
+  // payroll_summary.PayrollPeriod, shown in the notification email to the next approver
+  public payrollPeriod: string;
   public retryingSummaryStatus = false;
   // seconds left before the idle redirect; null while the warning is hidden
   public idleCountdown: number | null = null;
@@ -108,6 +110,8 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private payslipService: PayslipService,
     private modalService: NgbModal,
+    private payrollEmployeeDetailsService: PayrollEmployeeDetailsService,
+    private mailService: MailService,
   ) {
     this.unsubscribeAll = new Subject();
   }
@@ -408,6 +412,11 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
           positionClass: 'toast-bottom-center',
           toastClass: 'toast ngx-toastr',
         });
+        // Verified by approved: let the Approved by know it is their turn.
+        // Runs before getApprovers() replaces the list it reads from.
+        if (approving && approver.step === 'notedBy') {
+          this.notifyApprovedBy();
+        }
         this.getApprovers();
       },
       (httpError: HttpErrorResponse) => {
@@ -428,12 +437,79 @@ export class PayrollApprovalReportComponent implements OnInit, OnDestroy {
         (response) => {
           const summary = (response.Data ?? []).find((item: any) => String(item.Id) === this.payrollSummaryId);
           this.summaryStatus = summary?.Status;
+          this.payrollPeriod = summary?.PayrollPeriod;
         },
         () => {
           // leave the status unknown so no out-of-sync warning is shown on a failed lookup
           this.summaryStatus = undefined;
         }
       );
+  }
+
+  // Emails the Approved by that the summary was verified and awaits their approval.
+  // The Verified by's approval is already saved, so a failure here only shows a warning.
+  private notifyApprovedBy(): void {
+    const toastOptions = { timeOut: 6000, positionClass: 'toast-bottom-center', toastClass: 'toast ngx-toastr' };
+    const next = this.approvers.find((a) => a.step === 'approvedBy');
+    const verifier = this.approvers.find((a) => a.step === 'notedBy');
+    if (!next?.employeeNumber) {
+      this.toastr.warning('', 'Approved, but the "Approved by" approver could not be identified for email notification.', toastOptions);
+      return;
+    }
+    const nextName = next.name || 'the next approver';
+
+    this.payrollEmployeeDetailsService
+      .apiVversionPayrollPayrollEmployeeDetailsGetEmployeeEmailGet(environment.apiVersionForPayroll, this.payrollGroup, next.employeeNumber)
+      .pipe(
+        // response shape not in the generated client; accept { Data: { Email } } or { Data: "<email>" }
+        map((res: any) => {
+          const data = res?.Data;
+          const email = typeof data === 'string' ? data : data?.Email ?? data?.email;
+          if (!email) {
+            throw new Error('NO_EMAIL');
+          }
+          return String(email);
+        }),
+        switchMap((email) =>
+          this.mailService.apiVversionMailSendEmailPost(environment.apiVersionForPayroll, {
+            email,
+            subject: `Payroll Summary for Approval – ${this.payrollPeriod || 'Current Payroll Period'}`,
+            body: this.buildApprovedByEmailBody(nextName, verifier?.name),
+          })
+        ),
+        takeUntil(this.unsubscribeAll)
+      )
+      .subscribe(
+        () => this.toastr.info('', `Email notification sent to ${nextName}.`, toastOptions),
+        (error) =>
+          this.toastr.warning(
+            '',
+            error?.message === 'NO_EMAIL'
+              ? `Approved, but ${nextName} has no registered email. Please inform them directly.`
+              : `Approved, but the email notification to ${nextName} could not be sent.`,
+            toastOptions
+          )
+      );
+  }
+
+  private buildApprovedByEmailBody(approverName: string, verifierName?: string): string {
+    const period = this.payrollPeriod || 'the current payroll period';
+    const link = `${window.location.origin}${this.listUrl}?group=${encodeURIComponent(this.payrollGroup)}`;
+    return (
+      `<p>Good day, <strong>${this.escapeHtml(approverName)}</strong>,</p>` +
+      `<p>This is to inform you that the payroll summary for the period <strong>${this.escapeHtml(period)}</strong> ` +
+      `has been reviewed and verified by <strong>${this.escapeHtml(verifierName || 'the verifying officer')}</strong>, ` +
+      `and is now awaiting your approval.</p>` +
+      `<p>Please review the payroll summary at your earliest convenience through the HRIS Payroll Summary Approval page:<br>` +
+      `<a href="${this.escapeHtml(link)}">Open Payroll Summary Approval</a></p>` +
+      `<p>Thank you.</p>` +
+      `<p style="color:#888888;font-size:12px;"><em>This is a system-generated notification from SIDC HRIS. Please do not reply to this email.</em></p>`
+    );
+  }
+
+  private escapeHtml(value: string): string {
+    const entities: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(value).replace(/[&<>"']/g, (c) => entities[c] ?? c);
   }
 
   // The payroll summary status the approvers' decisions call for: REJECTED once any approver
