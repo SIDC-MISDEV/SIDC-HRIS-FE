@@ -12,7 +12,13 @@ import { PayrollApprovalReportComponent } from './payroll-approval-report/payrol
 import { PayrollAllocationApprovalComponent } from './payroll-allocation-approval/payroll-allocation-approval.component';
 import { EnterPinModalComponent } from './payroll-pin/enter-pin-modal.component';
 import { ChangePinModalComponent } from './payroll-pin/change-pin-modal.component';
-import { BASE_PATH as BASE_PATH_PAYROLL, PayrollSummaryService, PayslipService } from 'app/api/sidc-services/payroll';
+import {
+  BASE_PATH as BASE_PATH_PAYROLL,
+  MailService,
+  PayrollEmployeeDetailsService,
+  PayrollSummaryService,
+  PayslipService,
+} from 'app/api/sidc-services/payroll';
 import { BASE_PATH as BASE_PATH_REPORT_SERVER, ProjectReportTemplateService } from 'app/api/sidc-services/reportserver';
 import { TelerikReportingModule } from '@progress/telerik-angular-report-viewer';
 import { environment } from 'environments/environment';
@@ -75,6 +81,8 @@ const routes: Routes = [
     { provide: BASE_PATH_REPORT_SERVER, useValue: environment.apiUrlForReportServer },
     PayrollSummaryService,
     PayslipService,
+    PayrollEmployeeDetailsService,
+    MailService,
     ProjectReportTemplateService
   ]
 })
